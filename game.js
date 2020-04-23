@@ -1,0 +1,642 @@
+import Player from '/player.js'
+import InputHandler from '/input.js'
+import Table from '/table.js'
+import Alien from '/alien.js'
+import TextBox from '/textBox.js'
+import RewardText from '/rewardText.js'
+import Ingredient from '/ingredient.js'
+import {linear, periodic, rbf, linearPeriodic, linearRbf, periodicRbf,
+     getRandomInt, getRandomFloat} from '/rewardFunctions.js'
+
+
+
+export default class Game{
+    constructor(width, height){
+
+        // define canvas and its dimensions
+
+        this.canvas = document.getElementById("gameScreen");
+        this.ctx = this.canvas.getContext('2d');
+
+        this.canvas.width = window.innerWidth //- 15;
+        this.canvas.height = window.innerHeight //- 15;
+
+        this.GAME_WIDTH = this.canvas.width;
+        this.GAME_HEIGHT = this.canvas.height;
+
+        // object to switch between game states
+        this.GAMESTATES = {
+            RUNNING: 1,
+            BETWEENCYCLE: 2,
+            FINISHED: 3
+
+        };
+
+        // Make background gradients for each cycle:
+        //cycle 1:
+        this.bgGradient1 = this.ctx.createLinearGradient(Math.floor(this.GAME_WIDTH/2), 0, Math.floor(this.GAME_WIDTH/2), this.GAME_HEIGHT);
+        this.bgGradient1.addColorStop(0,"rgb(16, 6, 40)");
+        this.bgGradient1.addColorStop(1, "rgb(223, 232, 255)");
+
+        //cycle 2:
+        this.bgGradient2 = this.ctx.createLinearGradient(Math.floor(this.GAME_WIDTH/2), 0, Math.floor(this.GAME_WIDTH/2), this.GAME_HEIGHT);
+        this.bgGradient2.addColorStop(0,"rgb(0, 20, 32)");
+        this.bgGradient2.addColorStop(1, "rgb(255, 181, 199)");
+        // cycle 3
+        this.bgGradient3 = this.ctx.createLinearGradient(Math.floor(this.GAME_WIDTH/2), 0, Math.floor(this.GAME_WIDTH/2), this.GAME_HEIGHT);
+        this.bgGradient3.addColorStop(0,"rgb(40, 6, 6)");
+        this.bgGradient3.addColorStop(1, "rgb(255, 222, 89)");
+
+        this.gradientCycles = [this.bgGradient1, this.bgGradient2, this.bgGradient3];
+
+        // Store HTML elements in variables and save in list//
+        this.xSlider = document.getElementById("xSlider");
+        this.ySlider = document.getElementById("ySlider");
+        this.submitButton = document.getElementById("submitButton");
+        this.htmlList = [this.xSlider, this.ySlider, this.submitButton];
+        /////////// RESHAPE HTML OBJECTS/////////
+        this.reshapeHTML()
+
+        // Define textboxes where min, max and current values of sliders are shown
+        this.sliderInfo = [];
+
+        this.xSliderRect = this.xSlider.getBoundingClientRect();
+        this.ySliderRect = this.ySlider.getBoundingClientRect();
+
+
+        this.textMargin = Math.floor(this.GAME_WIDTH * 0.03);
+        // X slider texts:
+        // Min:
+        this.xMinText = new TextBox(this, (this.xSliderRect.x - this.textMargin),
+            (this.xSliderRect.y + this.xSliderRect.height), this.xSlider.min, "start");
+        this.sliderInfo.push(this.xMinText);
+        // Max:
+        this.xMaxText = new TextBox(this, (this.xSliderRect.right + this.textMargin),
+            (this.xSliderRect.y + this.xSliderRect.height), this.xSlider.max);
+        this.sliderInfo.push(this.xMaxText);
+        // Value:
+        this.xValueText = new TextBox(this, (this.xSliderRect.right - Math.floor(this.xSliderRect.width/2)),
+            this.xSliderRect.y -20, this.xSlider.value, "center");
+        this.sliderInfo.push(this.xValueText);
+
+
+        // Y slider texts:
+        // Min:
+        this.yMinText = new TextBox(this, (this.ySliderRect.x - this.textMargin),
+            (this.ySliderRect.y + this.ySliderRect.height), this.ySlider.min, "start");
+        this.sliderInfo.push(this.yMinText);
+        // Max:
+        this.yMaxText = new TextBox(this, (this.ySliderRect.right + this.textMargin),
+            (this.ySliderRect.y + this.ySliderRect.height), this.ySlider.max);
+        this.sliderInfo.push(this.yMaxText);
+        // Value:
+
+        this.yValueText = new TextBox(this, (this.ySliderRect.right - Math.floor(this.ySliderRect.width/2)),
+            this.ySliderRect.y, this.ySlider.value, "center");
+        this.sliderInfo.push(this.yValueText);
+
+        ///// Define slider colors/////
+        this.xSliderColor1 = "rgba(255, 41, 41, 1)";
+        this.xSliderColor2 = "rgba(5, 129, 250, 1)";
+        this.ySliderColor1 = "rgba(255, 41, 41, 1)";
+        this.ySliderColor2 = "rgba(5, 129, 250, 1)";
+
+
+
+
+
+        // Define how many cycles, i.e. the number of consecutive bandit tasks.
+        this.currentCycle = 0;
+        this.totalCycles = 3;
+
+        /// Define parameters for reward functions in all cycles///
+        // parameters for linear function
+        this.linearParamsCycle1 = [10, 1.8] // intercept and beta coefficient
+        this.linearParamsCycle2 = [30, -2.1]
+        this.linearParamsCycle3 = [3, 3]
+
+        this.linearParams = [this.linearParamsCycle1, this.linearParamsCycle2, this.linearParamsCycle3]
+        // parameters for periodic function
+        this.periodicParamsCycle1 = [19, 10, 3, 1.4]; // 0: intercept, 1: beta (roughness), 2: shift, 3: cycle length
+        this.periodicParamsCycle2 = [18, 11, 4, 2];
+        this.periodicParamsCycle3 = [18, 11, 4, 2];
+
+        //this.periodicParams = [this.periodicParamsCycle1, this.periodicParamsCycle2, this.periodicParamsCycle3]
+        // rbf parameters
+        this.rbfParams = [9, 17, 0.7, 6];
+
+        this.allParameters = [[this.linearParamsCycle1, this.periodicParamsCycle1],
+            [this.linearParamsCycle2, this.periodicParamsCycle2], [[this.linearParamsCycle3, this.periodicParamsCycle3], this.rbfParams]];
+
+        // define which reward functions should appear in which cycle
+        this.rfCycle1 = [linear, periodic];
+        this.rfCycle2 = [linear, periodic];
+        this.rfCycle3 = [linearPeriodic, rbf];
+
+        this.allRewardFunctions = [this.rfCycle1, this.rfCycle2, this.rfCycle3];
+
+        // Pre load images with loadImages method.
+        this.loadImages();
+
+
+    }
+
+    reshapeHTML(){
+        // Define dimensions of html elements after configuring canvas dimensions
+        this.sliderWidth = Math.floor(this.GAME_WIDTH * 0.35);
+        this.sliderHeight = Math.floor(this.GAME_HEIGHT * 0.03);
+        this.sliderLeft = Math.floor(this.GAME_WIDTH/2) - Math.floor(this.sliderWidth/2);
+        this.sliderTop = Math.floor(this.GAME_HEIGHT - (this.slider));
+        this.btnWidth = Math.floor(this.GAME_WIDTH *0.2);
+        this.btnHeight = Math.floor(this.GAME_HEIGHT * 0.2);
+        this.btnLeft = Math.floor(this.GAME_WIDTH * 0.75);
+        this.btnTop = Math.floor(this.GAME_HEIGHT * 0.7);
+
+
+
+        this.xSlider.style.width = `${this.sliderWidth}px`;
+        this.xSlider.style.height = `${this.sliderHeight}px`
+        this.xSlider.style.left = `${this.sliderLeft}px`;
+        this.xSlider.style.top = `${Math.floor(this.GAME_HEIGHT - (10*this.sliderHeight))}px`;
+
+        this.ySlider.style.width = `${this.sliderWidth}px`;
+        this.ySlider.style.height = `${this.sliderHeight}px`
+        this.ySlider.style.left = `${this.sliderLeft}px`;
+        this.ySlider.style.top = `${Math.floor(this.GAME_HEIGHT - (4*this.sliderHeight))}px`;
+
+        this.submitButton.style.width = `${this.btnWidth}px`;
+        this.submitButton.style.height = `${this.btnHeight}px`;
+        this.submitButton.style.left = `${this.btnLeft}px`;
+        this.submitButton.style.top = `${this.btnTop}px`;
+
+        // Show html elements
+        for (let element in this.htmlList){
+            this.htmlList[element].style.display = "block";
+        }
+
+
+    }
+
+    startNewGame(){
+        // creates the tables, as well as the first 3 aliens to start off the
+        // game:
+
+        this.currentGameState = this.GAMESTATES.RUNNING;
+
+        for (let elem in this.htmlList){
+            this.htmlList[elem].style.display = "block";
+        }
+
+        this.lastAlienServed = false;
+
+
+        // define game settings
+        this.totalReward = 0;
+        this.reward = 0;
+        this.totalTrials = 51;
+        this.trialsSymbol1 = 17;
+        this.trialsSymbol2 = 17;
+        this.trialsCompositional = 17;
+        this.trialList = [this.trialsSymbol1, this.trialsSymbol2, this.trialsCompositional];
+        this.specialTrials = 20;
+        this.noXTrials = 2;
+        this.noXTrialNumbers = [5, 9];
+        this.noYTrials = 2;
+        this.noYTrialNumbers = [3, 7];
+        this.currentTrial = 1;
+
+        // set background to the right color gradient, depending on current cycle
+        this.background = this.gradientCycles[this.currentCycle]
+
+
+        // Assign images to the ingredients
+        this.xIngredientImgs = this.allIngredients[`cycle${this.currentCycle}`][0];
+        this.yIngredientImgs = this.allIngredients[`cycle${this.currentCycle}`][1];
+
+        // create ingredients
+        this.xIngredient = new Ingredient(this, this.GAME_WIDTH*0.065, this.GAME_HEIGHT - 2* (this.GAME_WIDTH*0.15), this.xIngredientImgs);
+        this.yIngredient = new Ingredient(this, this.GAME_WIDTH*0.065, this.GAME_HEIGHT - this.xIngredient.width, this.yIngredientImgs);
+
+        // assign images to aliens
+        this.currentAlienImgs = this.allAlienImgs[`cycle${this.currentCycle}`];
+
+
+        //Configure sliders
+
+        this.xRange = ["0", "10"];
+        this.yRange = ["0", "10"];
+        this.changeSliderParams(this.xRange, this.yRange);
+
+
+        // create tables and first 3 aliens
+        this.tableImg = document.getElementById("table")
+        this.tableList = [];
+        for (let i = 0; i < 3; i++) {
+            this.tableList[i] = new Table(this, i+1, this.tableImg);
+        }
+
+
+        this.alienList = [];
+        for (let i = 0; i < 3; i++) {
+            this.features = this.generateRandomAlien();
+            this.currentRF = this.defineRewardFunction(this.features[0]);
+            this.alien = new Alien(this, this.features[0], this.features[1], this.currentAlienImgs[1],
+                 this.tableList[i], this.currentRF[0], this.currentRF[1]);
+            this.alienList.push(this.alien);
+        }
+
+        // Misc textboxes:
+        this.miscText = [];
+        this.rewardTextColor = "244, 79, 52";
+
+        this.rewardText = new RewardText(this, this.GAME_WIDTH/2, this.GAME_HEIGHT/2 + 30,
+             this.reward, "center", true, this.rewardTextColor, 100);
+
+        this.miscText.push(this.rewardText);
+
+        this.totalRewardTextColor = "102, 94, 201";
+        this.totalRewardText = new TextBox(this, this.btnLeft, this.GAME_HEIGHT*0.65,
+             `Total $: ${this.totalReward}`, "left", false, this.totalRewardTextColor, 50);
+        this.miscText.push(this.totalRewardText);
+
+        this.trialTextColor = this.totalRewardTextColor;
+        this.trialText = new TextBox(this, this.btnLeft, this.GAME_HEIGHT*0.55,
+             `Trial: ${this.currentTrial}`, "left", false, this.trialTextColor, 50);
+        this.miscText.push(this.trialText);
+
+        this.player = new Player(this, this.GAME_WIDTH, this.GAME_HEIGHT, this.tableList);
+
+        // If this is first cycle, create a new input handler, else stick to the old one
+        if (this.currentCycle == 0){
+            this.inputHandler = new InputHandler(this);
+        }
+
+
+    }
+
+    loadImages(){
+        // method for loading images from folder
+
+        this.allIngredients = [];
+        for (let i = 0; i < this.totalCycles; i++){
+            this.xIngredientImgs = []
+            this.yIngredientImgs = []
+            this.currentFolder = `assets/images/ingredients/cycle${i}`;
+            for (let j = 0; j <= 10; j++){
+                this.xIngredientImgs[j] = new Image();
+                this.xIngredientImgs[j].src = `${this.currentFolder}/x/${j}.png`
+            }
+            for (let k = 0; k <= 10; k++){
+                this.yIngredientImgs[k] = new Image();
+                this.yIngredientImgs[k].src = `${this.currentFolder}/y/${k}.png`
+            }
+            this.allIngredients[`cycle${i}`] = [this.xIngredientImgs, this.yIngredientImgs];
+
+        }
+
+        this.allAlienImgs = []
+        for (let i = 0; i < this.totalCycles; i++){
+            this.alienImgs = [];
+            this.alienAnimationImgs = [];
+            this.currentFolder = `assets/images/aliens/cycle${i}/standing`;
+            for (let j = 0; j < 10; j++){
+                this.image = new Image()
+                this.image.src = `${this.currentFolder}/${j}.png`;
+                this.alienImgs.push(this.image);
+                // this.alienImgs[j] = new Image();
+                // this.alienImgs[j].src = `${this.currentFolder}/${j}.png`;
+            }
+            this.currentFolder = `assets/images/aliens/cycle${i}/animation`;
+            for (let k = 1; k <= 4; k++){
+                this.image = new Image()
+                this.image.src = `${this.currentFolder}/alien_step${k}.png`;
+                this.alienAnimationImgs.push(this.image);
+                // this.alienAnimationImgs[k] = new Image();
+                // this.alienAnimationImgs[k].src = `${this.currentFolder}/alien_step${k}.png`
+            }
+            this.allAlienImgs[`cycle${i}`] = [this.alienImgs, this.alienAnimationImgs];
+
+        }
+
+    }
+
+    defineRewardFunction(features){
+
+        if (features[0] == 0){
+            // Give first function for this cycle and appropriate parameters
+            this.function1 = this.allRewardFunctions[this.currentCycle][0];
+            this.params1 = this.allParameters[this.currentCycle][0];
+        } else {
+            // Give second rf and appropriate params
+            this.function1 = this.allRewardFunctions[this.currentCycle][1];
+            this.params1 = this.allParameters[this.currentCycle][1];
+        }
+        if (features.length > 2){
+            // If this alien has more than 1 symbol
+            if (features[2] == 0){
+                // Give appropriate rf and params
+                this.function2 = this.allRewardFunctions[this.currentCycle][0];
+                this.params2 = this.allParameters[this.currentCycle][0];
+            }else {
+                this.function2 = this.allRewardFunctions[this.currentCycle][1];
+                this.params2 = this.allParameters[this.currentCycle][1];
+            }
+            return [[this.function1, this.function2], [this.params1, this.params2]]
+        }
+        return [[this.function1], [this.params1]]
+
+    }
+
+    generateRandomAlien(){
+        // procedure for generating aliens with a set of features randomly,
+        // depending on the number of trials left for each alien type. Returns
+        // alien features as a list of 0's and 1's.
+
+        // this list contains all combinations of symbols and colors
+        this.alienCombinations = [[0, 0], [0, 1], [1, 0], [1, 1], [0, 0, 1, 1],
+         [0, 1, 1, 0], [0, 0, 1, 0], [0, 1, 1, 1], [0, 0, 0, 1], [1, 1, 1, 0]];
+
+        if (this.trialList[0] > 4 || this.trialList[1] > 4){
+            this.combinationsIndex = getRandomInt(0, 3)
+            this.alienType = this.alienCombinations[this.combinationsIndex]
+            if (this.combinationsIndex >= 2){
+                this.trialList[1] -= 1;
+            } else {
+                this.trialList[0] -= 1;
+            }
+
+
+        } else if (this.trialList[0] != 0 || this.trialList[1] != 0) {
+            if (this.trialList[0] == 0){
+                this.combinationsIndex = getRandomInt(2, this.alienCombinations.length - 1);
+            } else if (this.trialList[1] == 0) {
+                this.combinationsIndex = getRandomInt(0, this.alienCombinations.length - 3);
+                if (this.combinationsIndex >= 2){
+                    this.combinationsIndex += 2;
+                }
+            } else {
+                this.combinationsIndex = getRandomInt(0, this.alienCombinations.length - 1)
+
+            }
+
+
+            this.alienType = this.alienCombinations[this.combinationsIndex];
+
+            if (this.combinationsIndex >= 4){
+                this.trialList[2] -= 1;
+            } else if (this.combinationsIndex >= 2) {
+                this.trialList[1] -= 1;
+            } else {
+                this.trialList[0] -= 1;
+            }
+
+        } else {
+
+            this.combinationsIndex = getRandomInt(4, this.alienCombinations.length - 1);
+            this.alienType = this.alienCombinations[this.combinationsIndex];
+
+        }
+
+        this.alienFeatures = this.alienType;
+        this.alienImage = this.currentAlienImgs[0][this.combinationsIndex];
+        return [this.alienFeatures, this.alienImage]
+
+
+
+    }
+
+    createRandomRange(noIngredient){
+        // creates a random range
+        if (noIngredient){
+            this.min = 0;
+            this.max = 0;
+        } else {
+            this.min = getRandomInt(0, 3)
+            this.max = getRandomInt(8, 10)
+
+        }
+
+        return [this.min, this.max];
+
+    }
+
+
+    newTrial() {
+        // Creates a new trial with a new Alien whose features are pseudo-randomly
+        // generated. It also pseudorandomly decides whether or not the trial
+        // is going to be special, and if it is, what the new range for x,y values will be
+        this.currentTrial += 1;
+
+        if (this.totalTrials - this.currentTrial > 2){
+            this.newAlienFeatures = this.generateRandomAlien();
+            this.currentRF = this.defineRewardFunction(this.newAlienFeatures[0]); // assign reward functions and parameters
+            this.newAlien = new Alien(this, this.newAlienFeatures[0],
+                this.newAlienFeatures[1], this.currentAlienImgs[1], this.player.currentTarget, this.currentRF[0], this.currentRF[1]);
+            this.alienList.push(this.newAlien); // append to alienList
+        }
+
+        // procedure for defining whether trial is special or not.
+        if (this.noXTrialNumbers.includes(this.currentTrial)){
+            this.noX = true;
+            this.noY = false;
+            this.trialIsSpecial = 1;
+        } else if (this.noYTrialNumbers.includes(this.currentTrial)) {
+            this.noX = false;
+            this.noY = true;
+            this.trialIsSpecial = 1;
+        } else if (this.specialTrials > 0) {
+            this.noX = false;
+            this.noY = false;
+            this.trialIsSpecial = getRandomInt(0, 1);
+        }
+
+        if (this.trialIsSpecial == 1){
+            this.specialTrials -= 1;
+            this.xRange = this.createRandomRange(this.noX);
+            this.yRange = this.createRandomRange(this.noY);
+        } else {
+            this.xRange = [0, 10];
+            this.yRange = [0, 10];
+        }
+
+        this.changeSliderParams(this.xRange, this.yRange);
+
+        //this.rewardText.change(this.reward);
+        this.totalRewardText.change(`Total $: ${this.totalReward}`);
+        this.trialText.change(`Trial: ${this.currentTrial}`);
+
+
+    }
+
+    changeSliderParams(xRange, yRange){
+        this.xSlider.min = String(xRange[0]);
+        this.xMinText.change(this.xSlider.min);
+
+        this.xSlider.max = String(xRange[1]);
+        this.xMaxText.change(this.xSlider.max);
+
+
+        this.ySlider.min = String(yRange[0]);
+        this.yMinText.change(this.ySlider.min);
+
+        this.ySlider.max = String(yRange[1]);
+        this.yMaxText.change(this.ySlider.max);
+
+
+
+
+        this.xSlider.value = this.xSlider.min;
+        this.ySlider.value = this.ySlider.min;
+
+        this.xIngredient.update(this.xSlider.value);
+        this.yIngredient.update(this.ySlider.value);
+
+        this.xValueText.change(this.xSlider.value);
+        this.yValueText.change(this.ySlider.value);
+
+        if (this.xSlider.max == this.xSlider.min){
+            this.xGradient = 0;
+            this.yGradient = ((this.ySlider.value - this.ySlider.min)/(this.ySlider.max - this.ySlider.min))*100;
+            this.xSlider.style.opacity = 0.3;
+            this.ySlider.style.opacity = 0.85;
+        } else if(this.ySlider.max == this.ySlider.min){
+            this.yGradient = 0;
+            this.xGradient = ((this.xSlider.value - this.xSlider.min)/(this.xSlider.max - this.xSlider.min))*100;
+            this.xSlider.style.opacity = 0.85;
+            this.ySlider.style.opacity = 0.3;
+        } else {
+            this.xGradient = ((this.xSlider.value - this.xSlider.min)/(this.xSlider.max - this.xSlider.min))*100;
+            this.yGradient = ((this.ySlider.value - this.ySlider.min)/(this.ySlider.max - this.ySlider.min))*100;
+            this.xSlider.style.opacity = 0.85;
+            this.ySlider.style.opacity = 0.85;
+        }
+
+
+        this.xColor = `linear-gradient(90deg, ${this.xSliderColor1} ${this.xGradient}%, ${this.xSliderColor2} ${this.xGradient}%)`;
+        this.yColor = `linear-gradient(90deg, ${this.ySliderColor1} ${this.yGradient}%, ${this.ySliderColor2} ${this.yGradient}%)`;
+        this.xSlider.style.background = this.xColor;
+        this.ySlider.style.background = this.yColor;
+
+    }
+
+    update(dt){
+        // update method
+        if (this.currentGameState === this.GAMESTATES.RUNNING){
+            this.player.update(dt);
+
+            for (let alien in this.alienList){
+                this.alienList[alien].update(dt);
+            }
+
+            for (let sliderText in this.sliderInfo){
+                this.sliderInfo[sliderText].update()
+            }
+            for (let miscInfo in this.miscText){
+                this.miscText[miscInfo].update();
+            }
+
+            if (this.lastAlienServed && this.rewardText.hasFaded){
+                this.currentGameState = this.GAMESTATES.BETWEENCYCLE;
+            }
+        } else {
+            for (let elem in this.htmlList){
+                this.htmlList[elem].style.display = "none";
+            }
+        }
+    }
+
+
+    draw(ctx){
+        // draw method
+        if (this.currentGameState === this.GAMESTATES.RUNNING){
+            this.ctx.fillStyle = this.background;
+            this.ctx.fillRect(0, 0, this.GAME_WIDTH, this.GAME_HEIGHT);
+
+
+            for (let i = this.alienList.length - 1; i >= 0; i--){
+                this.alienList[i].draw(ctx);
+            }
+
+            for(let table in this.tableList){
+                this.tableList[table].draw(ctx);
+            };
+
+            this.player.draw(ctx);
+
+            for (let textBox in this.sliderInfo){
+                this.sliderInfo[textBox].draw(ctx);
+            };
+
+            for (let miscInfo in this.miscText){
+                this.miscText[miscInfo].draw(ctx);
+            };
+
+
+
+            this.xIngredient.draw(ctx);
+            this.yIngredient.draw(ctx);
+        } else if (this.currentGameState === this.GAMESTATES.BETWEENCYCLE) {
+            ctx.rect(0, 0, this.GAME_WIDTH, this.GAME_HEIGHT);
+            ctx.fillStyle = "rgba(0,0,0,0.5)";
+            ctx.fill();
+
+            ctx.font = "30px Arial";
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            ctx.fillText("You've finished a cycle, press ENTER to continue", this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2);
+        } else {
+            ctx.rect(0, 0, this.GAME_WIDTH, this.GAME_HEIGHT);
+            ctx.fillStyle = "rgba(0,0,0,0.5)";
+            ctx.fill();
+
+            ctx.font = "30px Arial";
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            ctx.fillText("You have finished the game", this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2);
+        }
+
+    }
+}
+
+//
+//
+//
+//
+// let fullscreenBtn = document.getElementById("fullscreenBtn");
+// fullscreenBtn.style.position = "absolute"
+// fullscreenBtn.style.top = "200px"
+//
+// let startBtn = document.getElementById("start");
+// startBtn.style.position = "absolute";
+// startBtn.style.top = "100px"
+//
+// startBtn.onclick = startGame
+//
+// fullscreenBtn.addEventListener('click', event => {
+//     document.documentElement.requestFullscreen();
+//     fullscreenBtn.style.display = "none";
+//
+// });
+//
+// function startGame(){
+//     startBtn.style.display = "none";
+//     let game  = new Game(1400, 600);
+//     game.startNewGame();
+//     let lastTime = 0;
+//
+//     function gameLoop(timestamp){
+//         let dt = timestamp - lastTime;
+//         lastTime = timestamp;
+//         game.ctx.clearRect(0, 0, game.GAME_WIDTH, game.GAME_HEIGHT);
+//
+//
+//
+//
+//         game.update(dt);
+//         game.draw(game.ctx);
+//
+//         requestAnimationFrame(gameLoop);
+//     }
+//
+//     requestAnimationFrame(gameLoop);
+// }
