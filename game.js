@@ -208,14 +208,14 @@ export default class Game{
         // load table image
 
         this.tableImage = new Image();
-        this.tableImage.src = "assets/images/tables/table.png"
+        this.tableImage.src = "assets/tables/table.png"
 
         // load ingredient imgs
         this.allIngredients = [];
         for (let i = 0; i < this.totalCycles; i++){
             this.xIngredientImgs = []
             this.yIngredientImgs = []
-            this.currentFolder = `assets/images/ingredients/cycle${i}`;
+            this.currentFolder = `assets/ingredients/cycle${i}`;
             for (let j = 0; j <= 15; j++){
                 this.xIngredientImgs[j] = new Image();
                 this.xIngredientImgs[j].src = `${this.currentFolder}/x/${j}.png`
@@ -233,21 +233,19 @@ export default class Game{
         for (let i = 0; i < this.totalCycles; i++){
             this.alienImgs = [];
             this.alienAnimationImgs = [];
-            this.currentFolder = `assets/images/aliens/cycle${i}/standing`;
+            this.currentFolder = `assets/aliens/cycle${i}/standing`;
             for (let j = 0; j < 10; j++){
                 this.image = new Image()
                 this.image.src = `${this.currentFolder}/${j}.png`;
                 this.alienImgs.push(this.image);
-                // this.alienImgs[j] = new Image();
-                // this.alienImgs[j].src = `${this.currentFolder}/${j}.png`;
+
             }
-            this.currentFolder = `assets/images/aliens/cycle${i}/animation`;
+            this.currentFolder = `assets/aliens/cycle${i}/animation`;
             for (let k = 1; k <= 4; k++){
                 this.image = new Image()
                 this.image.src = `${this.currentFolder}/alien_step${k}.png`;
                 this.alienAnimationImgs.push(this.image);
-                // this.alienAnimationImgs[k] = new Image();
-                // this.alienAnimationImgs[k].src = `${this.currentFolder}/alien_step${k}.png`
+
             }
             this.allAlienImgs[`cycle${i}`] = [this.alienImgs, this.alienAnimationImgs];
 
@@ -257,7 +255,7 @@ export default class Game{
         this.playerImgs = [];
         this.leftAnimations = [];
         this.rightAnimations = [];
-        this.currentFolder = `assets/images/player`;
+        this.currentFolder = `assets/player`;
         for (let i = 0; i < 9; i++){
             this.image = new Image();
             this.image.src = `${this.currentFolder}/${i}.png`
