@@ -1,3 +1,5 @@
+console.log("Does this work");
+
 import Game from './game.js'
 
 // Hide HTML elements used in game
