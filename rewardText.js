@@ -1,4 +1,4 @@
-import TextBox from '/textBox.js'
+import TextBox from './textBox.js'
 
 export default class RewardText extends TextBox{
     constructor(game, x, y, text1, align = "end", size =70, fade = false, color = "red"){
