@@ -20,19 +20,19 @@ export default class InputHandler {
 
         game.submitButton.addEventListener('click', event => {
             if (game.player.canSelect && game.player.currentTarget.currentCustomer.readyToServe){
-
-
+                game.currentTrial += 1;
+                game.trialText.change(`Trials left: ${game.totalTrials - game.currentTrial}`);
                 game.player.currentTarget.currentCustomer.giveReward(game.xSlider.value, game.ySlider.value);
-
-                //game.player.currentTarget.currentCustomer.xtarget = 4000;
+                game.totalRewardText.change(`Total $: ${game.totalReward}`);
                 game.rewardText.change(game.reward);
-                if (game.currentTrial + 1 == game.totalTrials){
-                    if (game.currentCycle + 1 < game.totalCycles) {
-                        game.lastAlienServed = true;
-                    } else {
-                        game.currentGameState = game.GAMESTATES.FINISHED;
-                    }
-                } else {
+                if (game.totalTrials - game.currentTrial == 0){
+                    game.lastAlienServed = true;
+                    // if (game.currentCycle + 1 < game.totalCycles) {
+                    //     game.lastAlienServed = true;
+                    // } else {
+                    //     game.currentGameState = game.GAMESTATES.FINISHED;
+                    // }
+                } else if(game.currentGameState !== game.GAMESTATES.BONUSROUND) {
                     game.newTrial();
                 }
             }

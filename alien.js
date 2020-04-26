@@ -47,7 +47,7 @@ export default class Alien{
     }
 
     move(dt){
-        // define the change in speed (deltas speed), this.ds, as speed over dt
+        // define the change in speed (delta speed), this.ds, as speed over dt
         this.ds = this.speed/dt;
         if (this.x > this.xtarget){
             if (this.x - this.ds < this.xtarget){

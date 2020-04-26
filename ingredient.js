@@ -15,6 +15,7 @@ export default class Ingredient{
 
     update(newValue) {
         this.newValue = parseInt(newValue);
+    
         this.currentImgIndex = this.newValue;
         this.currentImg = this.imgList[this.currentImgIndex];
     }

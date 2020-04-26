@@ -3,9 +3,7 @@
     margin: 0;
     padding: 0;
 }
-img{
-    display: none;
-}
+
 
 body {
     margin: 0;
@@ -13,10 +11,9 @@ body {
 }
 
 .submitButton{
-
-    background-color: #FFC107;
     border: none;
-    color: rgb(40, 35, 61);
+    background-color: rgb(255, 69, 69);
+    color: rgb(247, 247, 247);
     padding: 15px 32px;
     text-align: center;
     text-decoration: none;
@@ -30,10 +27,12 @@ body {
     box-shadow: 0 9px #999;
 
 }
-
 .submitButton:hover {
-    background-color: rgb(255, 69, 69);
-    color: rgb(247, 247, 247);
+
+
+    background-color: #FFC107;
+
+    color: rgb(40, 35, 61);
 }
 
 .submitButton:active {
@@ -43,20 +42,67 @@ body {
 }
 
 
-
-.slidecontainer1 {
-
-    width: 75%;
+.wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.startGameBtn{
+    border: none;
+    background-color: rgb(125, 164, 185);
+    color: rgb(32, 32, 32);
+    text-align: center;
+    font-size: 40px;
+    border-radius: 20px;
+    font-family: Georgia, serif;
+    font-weight: bold;
+    padding: 1% 7%;
+    position: absolute;
+    top: 30%;
 
 }
 
-.slidecontainer2{
-    width: 75%;
+.startGameBtn:hover{
+
+    background-color: rgb(90, 122, 139);
+
 }
+
+.fullscreenBtn{
+    border: none;
+    background-color: rgb(125, 164, 185);
+    color: rgb(32, 32, 32);
+    text-align: center;
+    font-size: 40px;
+    border-radius: 20px;
+    font-family: Georgia, serif;
+    font-weight: bold;
+    padding: 1% 7%;
+    position: absolute;
+    top: 50%;
+
+}
+
+.fullscreenBtn:hover{
+    background-color: rgb(90, 122, 139);
+}
+
+.fullscreenWarning{
+
+    font-size: 30px;
+    font-family: Georgia, serif;
+    font-weight: bold;
+    display: none;
+    color: rgb(247, 88, 80);
+    margin-top: 1%;
+
+}
+
+
 
 .xSlider{
 
-    -webkit-appearance: none;  /* Override default CSS styles */
+    -webkit-appearance: none;
     appearance: none;
     position: absolute;
     top: 70%;
@@ -64,21 +110,15 @@ body {
     width: 40%;
     height: 100px;
 
-    height: 25px; /* Specified height */
-    background: linear-gradient(90deg, rgb(100, 200, 100) 15%, rgb(100, 100, 250) 35%); /* Grey background */
-    outline: none; /* Remove outline */
-    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+    height: 25px;
+    background: green;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
     transition: opacity .2s;
     border-radius: 12px;
     box-shadow: 0px 1px 10px 1px black;
 
-/*
-    position: absolute;
-    top: 500px;
-    left: 250px;
-    width: 500px;
-    height: 100px; */
 }
 
 
@@ -109,7 +149,7 @@ body {
 
 .ySlider{
 
-    -webkit-appearance: none;  /* Override default CSS styles */
+    -webkit-appearance: none;
     appearance: none;
     position: absolute;
     top: 90%;
@@ -117,11 +157,11 @@ body {
     width: 40%;
     height: 100px;
 
-    height: 25px; /* Specified height */
-    background: green; /* Grey background */
-    outline: none; /* Remove outline */
-    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-    -webkit-transition: 0.2s; /* 0.2 seconds transition on hover */
+    height: 25px;
+    background: green;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: 0.2s;
     transition: opacity 0.2s;
     border-radius: 12px;
     box-shadow: 0px 1px 10px 1px black;

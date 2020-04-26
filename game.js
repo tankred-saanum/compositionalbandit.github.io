@@ -27,8 +27,9 @@ export default class Game{
         // object to switch between game states
         this.GAMESTATES = {
             RUNNING: 1,
-            BETWEENCYCLE: 2,
-            FINISHED: 3
+            BONUSROUND: 2,
+            BETWEENCYCLE: 3,
+            FINISHED: 4
 
         };
 
@@ -54,7 +55,8 @@ export default class Game{
         this.ySlider = document.getElementById("ySlider");
         this.submitButton = document.getElementById("submitButton");
         this.htmlList = [this.xSlider, this.ySlider, this.submitButton];
-        /////////// RESHAPE HTML OBJECTS/////////
+
+        // reshape html elements
         this.reshapeHTML()
 
         // Define textboxes where min, max and current values of sliders are shown
@@ -63,37 +65,61 @@ export default class Game{
         this.xSliderRect = this.xSlider.getBoundingClientRect();
         this.ySliderRect = this.ySlider.getBoundingClientRect();
 
-
-        this.textMargin = Math.floor(this.GAME_WIDTH * 0.03);
+        this.betweenTrialTextSize = Math.floor(this.GAME_WIDTH * 0.04);
+        this.textMargin = Math.floor(this.GAME_WIDTH * 0.02);
+        this.sliderTextSize = Math.floor(this.GAME_WIDTH * 0.037);
         // X slider texts:
         // Min:
         this.xMinText = new TextBox(this, (this.xSliderRect.x - this.textMargin),
-            (this.xSliderRect.y + this.xSliderRect.height), this.xSlider.min, "start");
+            (this.xSliderRect.y + this.xSliderRect.height), this.xSlider.min, "end", this.sliderTextSize);
         this.sliderInfo.push(this.xMinText);
         // Max:
         this.xMaxText = new TextBox(this, (this.xSliderRect.right + this.textMargin),
-            (this.xSliderRect.y + this.xSliderRect.height), this.xSlider.max);
+            (this.xSliderRect.y + this.xSliderRect.height), this.xSlider.max, "start", this.sliderTextSize);
         this.sliderInfo.push(this.xMaxText);
         // Value:
         this.xValueText = new TextBox(this, (this.xSliderRect.right - Math.floor(this.xSliderRect.width/2)),
-            this.xSliderRect.y -20, this.xSlider.value, "center");
+            this.xSliderRect.y - this.textMargin, this.xSlider.value, "center", this.sliderTextSize);
         this.sliderInfo.push(this.xValueText);
 
 
         // Y slider texts:
         // Min:
         this.yMinText = new TextBox(this, (this.ySliderRect.x - this.textMargin),
-            (this.ySliderRect.y + this.ySliderRect.height), this.ySlider.min, "start");
+            (this.ySliderRect.y + this.ySliderRect.height), this.ySlider.min, "end", this.sliderTextSize);
         this.sliderInfo.push(this.yMinText);
         // Max:
         this.yMaxText = new TextBox(this, (this.ySliderRect.right + this.textMargin),
-            (this.ySliderRect.y + this.ySliderRect.height), this.ySlider.max);
+            (this.ySliderRect.y + this.ySliderRect.height), this.ySlider.max, "start", this.sliderTextSize);
         this.sliderInfo.push(this.yMaxText);
         // Value:
 
         this.yValueText = new TextBox(this, (this.ySliderRect.right - Math.floor(this.ySliderRect.width/2)),
-            this.ySliderRect.y, this.ySlider.value, "center");
+            this.ySliderRect.y - this.textMargin, this.ySlider.value, "center", this.sliderTextSize);
         this.sliderInfo.push(this.yValueText);
+
+
+
+        this.miscText = [];
+
+        this.rewardTextColor = "244, 79, 52";
+        this.rewardTextSize = Math.floor(this.GAME_WIDTH*0.07);
+        this.rewardText = new RewardText(this, this.GAME_WIDTH/2, this.GAME_HEIGHT/2,
+             0, "center", this.rewardTextSize, true, this.rewardTextColor);
+
+        this.miscText.push(this.rewardText);
+
+        this.totalRewardTextColor = "255, 190, 0"///"102, 94, 201";
+        this.totalRewardTextSize = Math.floor(this.GAME_WIDTH*0.04);
+        this.totalRewardText = new TextBox(this, this.btnLeft, this.GAME_HEIGHT*0.65,
+             `Total $: 0`, "left", this.totalRewardTextSize, false, this.totalRewardTextColor);
+        this.miscText.push(this.totalRewardText);
+
+        this.trialTextColor = this.totalRewardTextColor;
+        this.trialTextSize = this.totalRewardTextSize;
+        this.trialText = new TextBox(this, this.btnLeft, this.GAME_HEIGHT*0.55,
+             `Trials left: 4`, "left", this.trialTextSize, false, this.trialTextColor);
+        this.miscText.push(this.trialText);
 
         ///// Define slider colors/////
         this.xSliderColor1 = "rgba(255, 41, 41, 1)";
@@ -117,11 +143,10 @@ export default class Game{
 
         this.linearParams = [this.linearParamsCycle1, this.linearParamsCycle2, this.linearParamsCycle3]
         // parameters for periodic function
-        this.periodicParamsCycle1 = [19, 10, 3, 1.4]; // 0: intercept, 1: beta (roughness), 2: shift, 3: cycle length
+        this.periodicParamsCycle1 = [19, 10, 3, 1.4]; // 0: intercept, 1: beta (smoothness), 2: shift, 3: cycle length
         this.periodicParamsCycle2 = [18, 11, 4, 2];
         this.periodicParamsCycle3 = [18, 11, 4, 2];
 
-        //this.periodicParams = [this.periodicParamsCycle1, this.periodicParamsCycle2, this.periodicParamsCycle3]
         // rbf parameters
         this.rbfParams = [9, 17, 0.7, 6];
 
@@ -155,12 +180,12 @@ export default class Game{
 
 
         this.xSlider.style.width = `${this.sliderWidth}px`;
-        this.xSlider.style.height = `${this.sliderHeight}px`
+        this.xSlider.style.height = `${this.sliderHeight}px`;
         this.xSlider.style.left = `${this.sliderLeft}px`;
         this.xSlider.style.top = `${Math.floor(this.GAME_HEIGHT - (10*this.sliderHeight))}px`;
 
         this.ySlider.style.width = `${this.sliderWidth}px`;
-        this.ySlider.style.height = `${this.sliderHeight}px`
+        this.ySlider.style.height = `${this.sliderHeight}px`;
         this.ySlider.style.left = `${this.sliderLeft}px`;
         this.ySlider.style.top = `${Math.floor(this.GAME_HEIGHT - (4*this.sliderHeight))}px`;
 
@@ -177,116 +202,25 @@ export default class Game{
 
     }
 
-    startNewGame(){
-        // creates the tables, as well as the first 3 aliens to start off the
-        // game:
-
-        this.currentGameState = this.GAMESTATES.RUNNING;
-
-        for (let elem in this.htmlList){
-            this.htmlList[elem].style.display = "block";
-        }
-
-        this.lastAlienServed = false;
-
-
-        // define game settings
-        this.totalReward = 0;
-        this.reward = 0;
-        this.totalTrials = 51;
-        this.trialsSymbol1 = 17;
-        this.trialsSymbol2 = 17;
-        this.trialsCompositional = 17;
-        this.trialList = [this.trialsSymbol1, this.trialsSymbol2, this.trialsCompositional];
-        this.specialTrials = 20;
-        this.noXTrials = 2;
-        this.noXTrialNumbers = [5, 9];
-        this.noYTrials = 2;
-        this.noYTrialNumbers = [3, 7];
-        this.currentTrial = 1;
-
-        // set background to the right color gradient, depending on current cycle
-        this.background = this.gradientCycles[this.currentCycle]
-
-
-        // Assign images to the ingredients
-        this.xIngredientImgs = this.allIngredients[`cycle${this.currentCycle}`][0];
-        this.yIngredientImgs = this.allIngredients[`cycle${this.currentCycle}`][1];
-
-        // create ingredients
-        this.xIngredient = new Ingredient(this, this.GAME_WIDTH*0.065, this.GAME_HEIGHT - 2* (this.GAME_WIDTH*0.15), this.xIngredientImgs);
-        this.yIngredient = new Ingredient(this, this.GAME_WIDTH*0.065, this.GAME_HEIGHT - this.xIngredient.width, this.yIngredientImgs);
-
-        // assign images to aliens
-        this.currentAlienImgs = this.allAlienImgs[`cycle${this.currentCycle}`];
-
-
-        //Configure sliders
-
-        this.xRange = ["0", "10"];
-        this.yRange = ["0", "10"];
-        this.changeSliderParams(this.xRange, this.yRange);
-
-
-        // create tables and first 3 aliens
-        this.tableImg = document.getElementById("table")
-        this.tableList = [];
-        for (let i = 0; i < 3; i++) {
-            this.tableList[i] = new Table(this, i+1, this.tableImg);
-        }
-
-
-        this.alienList = [];
-        for (let i = 0; i < 3; i++) {
-            this.features = this.generateRandomAlien();
-            this.currentRF = this.defineRewardFunction(this.features[0]);
-            this.alien = new Alien(this, this.features[0], this.features[1], this.currentAlienImgs[1],
-                 this.tableList[i], this.currentRF[0], this.currentRF[1]);
-            this.alienList.push(this.alien);
-        }
-
-        // Misc textboxes:
-        this.miscText = [];
-        this.rewardTextColor = "244, 79, 52";
-
-        this.rewardText = new RewardText(this, this.GAME_WIDTH/2, this.GAME_HEIGHT/2 + 30,
-             this.reward, "center", true, this.rewardTextColor, 100);
-
-        this.miscText.push(this.rewardText);
-
-        this.totalRewardTextColor = "102, 94, 201";
-        this.totalRewardText = new TextBox(this, this.btnLeft, this.GAME_HEIGHT*0.65,
-             `Total $: ${this.totalReward}`, "left", false, this.totalRewardTextColor, 50);
-        this.miscText.push(this.totalRewardText);
-
-        this.trialTextColor = this.totalRewardTextColor;
-        this.trialText = new TextBox(this, this.btnLeft, this.GAME_HEIGHT*0.55,
-             `Trial: ${this.currentTrial}`, "left", false, this.trialTextColor, 50);
-        this.miscText.push(this.trialText);
-
-        this.player = new Player(this, this.GAME_WIDTH, this.GAME_HEIGHT, this.tableList);
-
-        // If this is first cycle, create a new input handler, else stick to the old one
-        if (this.currentCycle == 0){
-            this.inputHandler = new InputHandler(this);
-        }
-
-
-    }
-
     loadImages(){
         // method for loading images from folder
 
+        // load table image
+
+        this.tableImage = new Image();
+        this.tableImage.src = "assets/images/tables/table.png"
+
+        // load ingredient imgs
         this.allIngredients = [];
         for (let i = 0; i < this.totalCycles; i++){
             this.xIngredientImgs = []
             this.yIngredientImgs = []
             this.currentFolder = `assets/images/ingredients/cycle${i}`;
-            for (let j = 0; j <= 10; j++){
+            for (let j = 0; j <= 15; j++){
                 this.xIngredientImgs[j] = new Image();
                 this.xIngredientImgs[j].src = `${this.currentFolder}/x/${j}.png`
             }
-            for (let k = 0; k <= 10; k++){
+            for (let k = 0; k <= 15; k++){
                 this.yIngredientImgs[k] = new Image();
                 this.yIngredientImgs[k].src = `${this.currentFolder}/y/${k}.png`
             }
@@ -294,6 +228,7 @@ export default class Game{
 
         }
 
+        // load alien imgs
         this.allAlienImgs = []
         for (let i = 0; i < this.totalCycles; i++){
             this.alienImgs = [];
@@ -318,7 +253,110 @@ export default class Game{
 
         }
 
+        // load player imgs
+        this.playerImgs = [];
+        this.leftAnimations = [];
+        this.rightAnimations = [];
+        this.currentFolder = `assets/images/player`;
+        for (let i = 0; i < 9; i++){
+            this.image = new Image();
+            this.image.src = `${this.currentFolder}/${i}.png`
+            if (i < 4){
+                this.leftAnimations.push(this.image);
+            } else if (i < 8) {
+                this.rightAnimations.push(this.image);
+            } else {
+                this.playerImgs.push(this.image);
+            }
+        }
+        this.playerImgs.push(this.leftAnimations);
+        this.playerImgs.push(this.rightAnimations);
+
     }
+
+    startNewGame(){
+        // creates the tables, as well as the first 3 aliens to start off the
+        // game:
+
+        this.currentGameState = this.GAMESTATES.RUNNING;
+
+        for (let elem in this.htmlList){
+            this.htmlList[elem].style.display = "block";
+        }
+
+        this.lastAlienServed = false;
+
+
+        // define game settings
+        this.totalReward = 0;
+        this.reward = 0;
+        this.totalTrials = 25;
+        this.trialsSymbol1 = Math.floor(this.totalTrials/3);
+        this.trialsSymbol2 = Math.floor(this.totalTrials/3);
+        this.trialsCompositional = this.totalTrials - (this.trialsSymbol1 + this.trialsSymbol2);
+        this.trialList = [this.trialsSymbol1, this.trialsSymbol2, this.trialsCompositional];
+        this.specialTrials = 20;
+        this.noXTrials = 2;
+        this.noXTrialNumbers = [5, 9];
+        this.noYTrials = 2;
+        this.noYTrialNumbers = [3, 7];
+        this.currentTrial = 0;
+
+        // set background to the right color gradient, depending on current cycle
+        this.background = this.gradientCycles[this.currentCycle]
+
+
+        // Assign images to the ingredients
+        this.xIngredientImgs = this.allIngredients[`cycle${this.currentCycle}`][0];
+        this.yIngredientImgs = this.allIngredients[`cycle${this.currentCycle}`][1];
+
+        // create ingredients
+        this.xIngredient = new Ingredient(this, this.GAME_WIDTH*0.065, this.GAME_HEIGHT - 2* (this.GAME_WIDTH*0.15), this.xIngredientImgs);
+        this.yIngredient = new Ingredient(this, this.GAME_WIDTH*0.065, this.GAME_HEIGHT - this.xIngredient.width, this.yIngredientImgs);
+
+        // assign images to aliens
+        this.currentAlienImgs = this.allAlienImgs[`cycle${this.currentCycle}`];
+
+
+        //Configure sliders
+
+        this.xRange = [0, 10];
+        this.yRange = [0, 10];
+        this.changeSliderParams(this.xRange, this.yRange);
+
+        // reset trial and reward texts
+        this.totalRewardText.change(`Total $: ${this.totalReward}`);
+        this.trialText.change(`Trials left: ${this.totalTrials - this.currentTrial}`);
+
+
+        // create tables and first 3 aliens
+        this.tableList = [];
+        for (let i = 0; i < 3; i++) {
+            this.tableList[i] = new Table(this, i+1, this.tableImage);
+        }
+
+
+        this.alienList = [];
+        for (let i = 0; i < 3; i++) {
+            this.features = this.generateRandomAlien();
+            this.currentRF = this.defineRewardFunction(this.features[0]);
+            this.alien = new Alien(this, this.features[0], this.features[1], this.currentAlienImgs[1],
+                 this.tableList[i], this.currentRF[0], this.currentRF[1]);
+            this.alienList.push(this.alien);
+        }
+
+
+        this.player = new Player(this, this.GAME_WIDTH, this.GAME_HEIGHT, this.tableList,
+             this.playerImgs[0], this.playerImgs[1], this.playerImgs[2]);
+
+        // If this is first cycle, create a new input handler, else stick to the old one
+        if (this.currentCycle == 0){
+            this.inputHandler = new InputHandler(this);
+        }
+
+
+    }
+
 
     defineRewardFunction(features){
 
@@ -352,7 +390,7 @@ export default class Game{
         // depending on the number of trials left for each alien type. Returns
         // alien features as a list of 0's and 1's.
 
-        // this list contains all combinations of symbols and colors
+        // this list contains all combinations of symbols and colors, 0 meaning first symbol/color, 1 meaning second symbol/color
         this.alienCombinations = [[0, 0], [0, 1], [1, 0], [1, 1], [0, 0, 1, 1],
          [0, 1, 1, 0], [0, 0, 1, 0], [0, 1, 1, 1], [0, 0, 0, 1], [1, 1, 1, 0]];
 
@@ -421,65 +459,18 @@ export default class Game{
     }
 
 
-    newTrial() {
-        // Creates a new trial with a new Alien whose features are pseudo-randomly
-        // generated. It also pseudorandomly decides whether or not the trial
-        // is going to be special, and if it is, what the new range for x,y values will be
-        this.currentTrial += 1;
-
-        if (this.totalTrials - this.currentTrial > 2){
-            this.newAlienFeatures = this.generateRandomAlien();
-            this.currentRF = this.defineRewardFunction(this.newAlienFeatures[0]); // assign reward functions and parameters
-            this.newAlien = new Alien(this, this.newAlienFeatures[0],
-                this.newAlienFeatures[1], this.currentAlienImgs[1], this.player.currentTarget, this.currentRF[0], this.currentRF[1]);
-            this.alienList.push(this.newAlien); // append to alienList
-        }
-
-        // procedure for defining whether trial is special or not.
-        if (this.noXTrialNumbers.includes(this.currentTrial)){
-            this.noX = true;
-            this.noY = false;
-            this.trialIsSpecial = 1;
-        } else if (this.noYTrialNumbers.includes(this.currentTrial)) {
-            this.noX = false;
-            this.noY = true;
-            this.trialIsSpecial = 1;
-        } else if (this.specialTrials > 0) {
-            this.noX = false;
-            this.noY = false;
-            this.trialIsSpecial = getRandomInt(0, 1);
-        }
-
-        if (this.trialIsSpecial == 1){
-            this.specialTrials -= 1;
-            this.xRange = this.createRandomRange(this.noX);
-            this.yRange = this.createRandomRange(this.noY);
-        } else {
-            this.xRange = [0, 10];
-            this.yRange = [0, 10];
-        }
-
-        this.changeSliderParams(this.xRange, this.yRange);
-
-        //this.rewardText.change(this.reward);
-        this.totalRewardText.change(`Total $: ${this.totalReward}`);
-        this.trialText.change(`Trial: ${this.currentTrial}`);
-
-
-    }
-
     changeSliderParams(xRange, yRange){
-        this.xSlider.min = String(xRange[0]);
+        this.xSlider.min = xRange[0];
         this.xMinText.change(this.xSlider.min);
 
-        this.xSlider.max = String(xRange[1]);
+        this.xSlider.max = xRange[1];
         this.xMaxText.change(this.xSlider.max);
 
 
-        this.ySlider.min = String(yRange[0]);
+        this.ySlider.min = yRange[0];
         this.yMinText.change(this.ySlider.min);
 
-        this.ySlider.max = String(yRange[1]);
+        this.ySlider.max = yRange[1];
         this.yMaxText.change(this.ySlider.max);
 
 
@@ -519,6 +510,78 @@ export default class Game{
 
     }
 
+
+
+
+    newTrial() {
+        // Creates a new trial with a new Alien whose features are pseudo-randomly
+        // generated. It also pseudorandomly decides whether or not the trial
+        // is going to be special, and if it is, what the new range for x,y values will be
+
+        if (this.totalTrials - this.currentTrial > 2){
+            this.newAlienFeatures = this.generateRandomAlien();
+            this.currentRF = this.defineRewardFunction(this.newAlienFeatures[0]); // assign reward functions and parameters
+            this.newAlien = new Alien(this, this.newAlienFeatures[0],
+                this.newAlienFeatures[1], this.currentAlienImgs[1], this.player.currentTarget, this.currentRF[0], this.currentRF[1]);
+            this.alienList.push(this.newAlien); // append to alienList
+        }
+
+        // procedure for defining whether trial is special or not.
+        if (this.noXTrialNumbers.includes(this.currentTrial)){
+            this.noX = true;
+            this.noY = false;
+            this.trialIsSpecial = 1;
+        } else if (this.noYTrialNumbers.includes(this.currentTrial)) {
+            this.noX = false;
+            this.noY = true;
+            this.trialIsSpecial = 1;
+        } else if (this.specialTrials > 0) {
+            this.noX = false;
+            this.noY = false;
+            this.trialIsSpecial = getRandomInt(0, 1);
+        }
+
+        if (this.trialIsSpecial == 1){
+            this.specialTrials -= 1;
+            this.xRange = this.createRandomRange(this.noX);
+            this.yRange = this.createRandomRange(this.noY);
+        } else {
+            this.xRange = [0, 10];
+            this.yRange = [0, 10];
+        }
+
+        this.changeSliderParams(this.xRange, this.yRange);
+    }
+
+    bonusRound(){
+
+        this.lastAlienServed = false;
+        this.currentTrial = 0;
+        this.totalTrials = 3;
+        this.bonusFeaturesList = [[0, 0], [1, 1], [0, 0, 1, 1]];
+        this.imageIndices = [0, 3, 4]
+        for (let i = 0; i < 3; i++){
+            this.currentImageIndex = this.imageIndices[i];
+            this.standingImg = this.currentAlienImgs[0][this.currentImageIndex];
+            this.currentRF = this.defineRewardFunction(this.bonusFeaturesList[i]);
+            this.bonusAlien = new Alien(this, this.bonusFeaturesList[i], this.standingImg,
+                 this.currentAlienImgs[1], this.tableList[i], this.currentRF[0], this.currentRF[1]);
+            this.alienList.push(this.bonusAlien);
+
+        }
+
+        this.bonusXRange = [10, 15];
+        this.bonusYRange = this.bonusXRange;
+
+        this.changeSliderParams(this.bonusXRange, this.bonusYRange);
+
+        this.bonusTextSize = Math.floor(this.GAME_WIDTH * 0.08);
+        this.bonusRoundText = new TextBox(this, this.GAME_WIDTH/2, this.GAME_HEIGHT*0.2, "BONUS ROUND!",
+                    "center", 120, false, "187, 205, 221")
+
+
+    }
+
     update(dt){
         // update method
         if (this.currentGameState === this.GAMESTATES.RUNNING){
@@ -536,8 +599,33 @@ export default class Game{
             }
 
             if (this.lastAlienServed && this.rewardText.hasFaded){
-                this.currentGameState = this.GAMESTATES.BETWEENCYCLE;
+                this.currentGameState = this.GAMESTATES.BONUSROUND;
+                this.bonusRound()
             }
+
+        } else if (this.currentGameState === this.GAMESTATES.BONUSROUND) {
+
+            this.player.update(dt);
+
+            for (let alien in this.alienList){
+                this.alienList[alien].update(dt);
+            }
+
+            for (let sliderText in this.sliderInfo){
+                this.sliderInfo[sliderText].update()
+            }
+            for (let miscInfo in this.miscText){
+                this.miscText[miscInfo].update();
+            }
+
+            if (this.lastAlienServed && this.rewardText.hasFaded){
+                if (this.currentCycle == (this.totalCycles - 1)){
+                    this.currentGameState = this.GAMESTATES.FINISHED;
+                } else {
+                this.currentGameState = this.GAMESTATES.BETWEENCYCLE;
+                }
+            }
+
         } else {
             for (let elem in this.htmlList){
                 this.htmlList[elem].style.display = "none";
@@ -548,10 +636,14 @@ export default class Game{
 
     draw(ctx){
         // draw method
-        if (this.currentGameState === this.GAMESTATES.RUNNING){
+        if (this.currentGameState === this.GAMESTATES.RUNNING || this.currentGameState === this.GAMESTATES.BONUSROUND){
             this.ctx.fillStyle = this.background;
             this.ctx.fillRect(0, 0, this.GAME_WIDTH, this.GAME_HEIGHT);
 
+
+            if (this.currentGameState === this.GAMESTATES.BONUSROUND){
+                this.bonusRoundText.draw(ctx);
+            }
 
             for (let i = this.alienList.length - 1; i >= 0; i--){
                 this.alienList[i].draw(ctx);
@@ -559,84 +651,48 @@ export default class Game{
 
             for(let table in this.tableList){
                 this.tableList[table].draw(ctx);
-            };
+            }
 
             this.player.draw(ctx);
 
             for (let textBox in this.sliderInfo){
                 this.sliderInfo[textBox].draw(ctx);
-            };
+            }
 
             for (let miscInfo in this.miscText){
                 this.miscText[miscInfo].draw(ctx);
-            };
+            }
 
 
 
             this.xIngredient.draw(ctx);
             this.yIngredient.draw(ctx);
+
+
+
         } else if (this.currentGameState === this.GAMESTATES.BETWEENCYCLE) {
-            ctx.rect(0, 0, this.GAME_WIDTH, this.GAME_HEIGHT);
-            ctx.fillStyle = "rgba(0,0,0,0.5)";
-            ctx.fill();
+            //ctx.rect(0, 0, this.GAME_WIDTH, this.GAME_HEIGHT);
+            ctx.fillStyle = "rgb(27, 46, 56)";
+            ctx.fillRect(0, 0, this.GAME_WIDTH, this.GAME_HEIGHT);
 
-            ctx.font = "30px Arial";
+            ctx.font = `bold ${this.betweenTrialTextSize}px Arial`;
             ctx.fillStyle = "white";
             ctx.textAlign = "center";
-            ctx.fillText("You've finished a cycle, press ENTER to continue", this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2);
+            ctx.fillText(`You have finished task number ${this.currentCycle + 1}`,
+             this.GAME_WIDTH / 2, this.GAME_HEIGHT *0.4);
+             ctx.fillText(`You earned $${this.totalReward}!`,
+              this.GAME_WIDTH / 2, this.GAME_HEIGHT * 0.5);
+            ctx.fillText(`Please press ENTER to continue`,
+              this.GAME_WIDTH / 2, this.GAME_HEIGHT *0.7);
         } else {
-            ctx.rect(0, 0, this.GAME_WIDTH, this.GAME_HEIGHT);
-            ctx.fillStyle = "rgba(0,0,0,0.5)";
-            ctx.fill();
+            ctx.fillStyle = "rgb(27, 46, 56)";
+            ctx.fillRect(0, 0, this.GAME_WIDTH, this.GAME_HEIGHT);
 
-            ctx.font = "30px Arial";
+            ctx.font = `bold ${this.betweenTrialTextSize}px Arial`;
             ctx.fillStyle = "white";
             ctx.textAlign = "center";
-            ctx.fillText("You have finished the game", this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2);
+            ctx.fillText("You have finished the experiment", this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2);
         }
 
     }
 }
-
-//
-//
-//
-//
-// let fullscreenBtn = document.getElementById("fullscreenBtn");
-// fullscreenBtn.style.position = "absolute"
-// fullscreenBtn.style.top = "200px"
-//
-// let startBtn = document.getElementById("start");
-// startBtn.style.position = "absolute";
-// startBtn.style.top = "100px"
-//
-// startBtn.onclick = startGame
-//
-// fullscreenBtn.addEventListener('click', event => {
-//     document.documentElement.requestFullscreen();
-//     fullscreenBtn.style.display = "none";
-//
-// });
-//
-// function startGame(){
-//     startBtn.style.display = "none";
-//     let game  = new Game(1400, 600);
-//     game.startNewGame();
-//     let lastTime = 0;
-//
-//     function gameLoop(timestamp){
-//         let dt = timestamp - lastTime;
-//         lastTime = timestamp;
-//         game.ctx.clearRect(0, 0, game.GAME_WIDTH, game.GAME_HEIGHT);
-//
-//
-//
-//
-//         game.update(dt);
-//         game.draw(game.ctx);
-//
-//         requestAnimationFrame(gameLoop);
-//     }
-//
-//     requestAnimationFrame(gameLoop);
-// }

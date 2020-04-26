@@ -11,30 +11,40 @@ submitBtn.style.display = "none";
 
 // Get fullscreen button and start button
 let fullscreenBtn = document.getElementById("fullscreenBtn");
-fullscreenBtn.style.position = "absolute"
-fullscreenBtn.style.top = "200px"
-let inFullscreen = false;
-
 let startBtn = document.getElementById("start");
-startBtn.style.position = "absolute";
-startBtn.style.top = "100px"
+let fullscreenWarning = document.getElementById("fullscreenWarning");
+
+let htmlElems = [fullscreenBtn, startBtn, fullscreenWarning];
+
+let inFullscreen = false;
 
 
 startBtn.onclick = function(){
     if(inFullscreen){
         startGame();
+        for (let elem in htmlElems){
+            htmlElems[elem].style.display = "none";
+        }
+    } else {
+        fullscreenWarning.style.display = "block";
     }
 };
 
 fullscreenBtn.addEventListener('click', event => {
-    document.documentElement.requestFullscreen();
-    fullscreenBtn.style.display = "none";
-    inFullscreen = true;
+    if (document.fullscreenElement == document.documentElement){
+        document.exitFullscreen();
+        inFullscreen = false;
+    } else {
+        document.documentElement.requestFullscreen();
+        inFullscreen = true;
+        fullscreenWarning.style.display = "none";
+    }
+
 
 });
 
 function startGame(){
-    startBtn.style.display = "none";
+    //startBtn.style.display = "none";
     let game  = new Game(1400, 600);
     game.startNewGame();
     let lastTime = 0;

@@ -1,5 +1,5 @@
 export default class TextBox {
-    constructor(game, x, y, text1, align = "end", fade = false, rgb = "19, 171, 144", size = 40) {
+    constructor(game, x, y, text1, align = "end", size = 40, fade = false, rgb = "21, 221, 151") {
         this.game = game;
 
         this.fade = fade;
@@ -14,7 +14,7 @@ export default class TextBox {
         this.y = y;
         this.text1 = text1;
         this.size = size;
-        this.upperBoundSize = this.size * 1.5;
+        this.upperBoundSize = Math.floor(this.size * 1.3);
         this.lowerBoundSize = this.size;
         this.rgb = rgb
         this.color = `rgba(${this.rgb}, ${this.alpha})`;

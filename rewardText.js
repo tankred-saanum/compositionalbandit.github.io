@@ -1,8 +1,9 @@
 import TextBox from '/textBox.js'
 
 export default class RewardText extends TextBox{
-    constructor(game, x, y, text1, align = "end", fade = false, color = "red", size =70){
-        super(game, x, y, text1, align, fade, color, size);
+    constructor(game, x, y, text1, align = "end", size =70, fade = false, color = "red"){
+        super(game, x, y, text1, align, size, fade, color);
+        this.upperBoundSize = Math.floor(this.size * 1.5);
 
     }
 
