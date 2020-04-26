@@ -1,12 +1,12 @@
-import Player from '/player.js'
-import InputHandler from '/input.js'
-import Table from '/table.js'
-import Alien from '/alien.js'
-import TextBox from '/textBox.js'
-import RewardText from '/rewardText.js'
-import Ingredient from '/ingredient.js'
+import Player from './player.js'
+import InputHandler from './input.js'
+import Table from './table.js'
+import Alien from './alien.js'
+import TextBox from './textBox.js'
+import RewardText from './rewardText.js'
+import Ingredient from './ingredient.js'
 import {linear, periodic, rbf, linearPeriodic, linearRbf, periodicRbf,
-     getRandomInt, getRandomFloat} from '/rewardFunctions.js'
+     getRandomInt, getRandomFloat} from './rewardFunctions.js'
 
 
 
@@ -208,14 +208,14 @@ export default class Game{
         // load table image
 
         this.tableImage = new Image();
-        this.tableImage.src = "assets/tables/table.png"
+        this.tableImage.src = "assets/images/tables/table.png"
 
         // load ingredient imgs
         this.allIngredients = [];
         for (let i = 0; i < this.totalCycles; i++){
             this.xIngredientImgs = []
             this.yIngredientImgs = []
-            this.currentFolder = `assets/ingredients/cycle${i}`;
+            this.currentFolder = `assets/images/ingredients/cycle${i}`;
             for (let j = 0; j <= 15; j++){
                 this.xIngredientImgs[j] = new Image();
                 this.xIngredientImgs[j].src = `${this.currentFolder}/x/${j}.png`
@@ -233,14 +233,14 @@ export default class Game{
         for (let i = 0; i < this.totalCycles; i++){
             this.alienImgs = [];
             this.alienAnimationImgs = [];
-            this.currentFolder = `assets/aliens/cycle${i}/standing`;
+            this.currentFolder = `assets/images/aliens/cycle${i}/standing`;
             for (let j = 0; j < 10; j++){
                 this.image = new Image()
                 this.image.src = `${this.currentFolder}/${j}.png`;
                 this.alienImgs.push(this.image);
 
             }
-            this.currentFolder = `assets/aliens/cycle${i}/animation`;
+            this.currentFolder = `assets/images/aliens/cycle${i}/animation`;
             for (let k = 1; k <= 4; k++){
                 this.image = new Image()
                 this.image.src = `${this.currentFolder}/alien_step${k}.png`;
@@ -255,7 +255,7 @@ export default class Game{
         this.playerImgs = [];
         this.leftAnimations = [];
         this.rightAnimations = [];
-        this.currentFolder = `assets/player`;
+        this.currentFolder = `assets/images/player`;
         for (let i = 0; i < 9; i++){
             this.image = new Image();
             this.image.src = `${this.currentFolder}/${i}.png`

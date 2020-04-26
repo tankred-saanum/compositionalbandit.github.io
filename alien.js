@@ -1,4 +1,4 @@
-import {getRandomInt} from '/rewardFunctions.js'
+import {getRandomInt} from './rewardFunctions.js'
 
 export default class Alien{
 
