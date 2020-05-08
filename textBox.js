@@ -17,7 +17,8 @@ export default class TextBox {
         this.upperBoundSize = Math.floor(this.size * 1.3);
         this.lowerBoundSize = this.size;
         this.rgb = rgb
-        this.color = `rgba(${this.rgb}, ${this.alpha})`;
+        this.defaultColor = `rgba(${this.rgb}, ${this.alpha})`;
+        this.color = this.defaultColor;
         this.textHasChanged = false;
         this.hasFaded = false;
 
@@ -32,6 +33,8 @@ export default class TextBox {
         }
 
         this.text1 = newText1;
+
+
 
     }
 

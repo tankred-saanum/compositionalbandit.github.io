@@ -18,9 +18,18 @@ export default class Alien{
 
         if (this.features.length > 2){
             this.compositional = true;
+            this.symbol1 = false;
+            this.symbol2 = false;
 
         } else {
             this.compositional = false;
+            if(this.features[0] == 0){
+                this.symbol1 = true;
+                this.symbol2 = false;
+            } else {
+                this.symbol1 = false;
+                this.symbol2 = true;
+            }
         }
 
         this.standingImg = standingImg;
@@ -43,6 +52,15 @@ export default class Alien{
         this.readyToServe = false;
         this.hasBeenServed = false;
         this.table.currentCustomer = this;
+
+        this.complainText = "What is taking so long?";
+        this.complainTime = 15000;
+        this.textSize = Math.floor(this.game.GAME_WIDTH * 0.02);
+        this.complain = false;
+        this.timerExists = false;
+        this.leaveTime = 500;
+        this.leaveTimer = 0;
+        this.waitingPenality = 1;
 
     }
 
@@ -96,6 +114,23 @@ export default class Alien{
             this.currentImg = this.standingImg;
             if (!this.hasBeenServed){
                 this.readyToServe = true;
+                if (!this.timerExists){
+                    this.firstTime = this.game.timer
+                    this.newTime = this.game.timer;
+                    this.timerExists = true;
+                }
+                this.newTime += (this.game.timer - this.newTime);
+                if(this.newTime - this.firstTime > this.complainTime){
+                    this.complain = true;
+                    this.waitingPenality = 0.7
+                }
+            } else if(this.x < this.game.GAME_WIDTH){
+                this.leaveTimer += (this.game.timer - this.leaveTimer);
+                this.complainText = "Thank you";
+                this.complain = true;
+                if (this.leaveTimer > this.leaveTime){
+                    this.xtarget = this.game.GAME_WIDTH + (2*this.width);
+                }
             }
         }
 
@@ -103,8 +138,9 @@ export default class Alien{
     }
 
     giveReward(x, y) {
+        this.complain = false;
         this.game.alienList.push(this.game.alienList.splice(this.game.alienList.indexOf(this), 1)[0]);
-        this.xtarget = this.game.GAME_WIDTH + (2*this.width);
+        //this.xtarget = this.game.GAME_WIDTH + (2*this.width);
         this.xValue = parseInt(x);
         this.yValue = parseInt(y);
 
@@ -132,10 +168,10 @@ export default class Alien{
 
 
             this.reward2 = this.rf2(this.input2, this.rfParams2);
-            this.reward = Math.round(this.reward1 + this.reward2);
+            this.reward = Math.round((this.reward1 + this.reward2)*this.waitingPenality);
 
         } else {
-            this.reward = Math.round(this.reward1);
+            this.reward = Math.round((this.reward1)*this.waitingPenality);
 
         }
 
@@ -144,10 +180,46 @@ export default class Alien{
         this.game.totalReward += this.reward;
         this.game.reward = this.reward;
 
+        this.xExploration = true;
+        this.yExploration = true;
+        this.exploration = true;
+        if (this.symbol1){
+            this.relevantHighscore = this.game.highscores.symbol1;
+        } else if (this.symbol2) {
+            this.relevantHighscore = this.game.highscores.symbol2;
+        } else {
+            this.relevantHighscore = this.game.highscores.compositional;
+        }
+
+
+
+        if (x == this.relevantHighscore[1]){
+            this.xExploration = false;
+        }
+        if (y == this.relevantHighscore[2]){
+            this.yExploration = false;
+        }
+
+        if (!(this.xExploration || this.yExploration)){
+            this.exploration = false;
+        }
+
+        if(this.reward > this.relevantHighscore[0]){
+            this.relevantHighscore[0] = this.reward;
+            this.relevantHighscore[1] = x;
+            this.relevantHighscore[2] = y;
+        }
+
     }
 
     draw(ctx){
         ctx.drawImage(this.currentImg, this.x, this.y, this.width, this.height);
+        if(this.complain){
+            ctx.textAlign = "center";
+            ctx.font = `bold ${this.textSize}px sans-serif`;
+            ctx.fillStyle = "rgb(255, 255, 255)";
+            ctx.fillText(this.complainText, this.x + this.width/2, this.y);
+        }
 
     }
 

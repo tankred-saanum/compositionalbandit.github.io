@@ -15,6 +15,9 @@ export default class Game{
 
         // define canvas and its dimensions
 
+        this.timer = 0;
+        this.betweenRoundTimer = 0;
+
         this.canvas = document.getElementById("gameScreen");
         this.ctx = this.canvas.getContext('2d');
 
@@ -32,6 +35,26 @@ export default class Game{
             FINISHED: 4
 
         };
+
+        // define object containing participant data, later to be saved as json
+
+        this.participantData = {
+            cycle: [],
+            trials: [],
+            moves: [],
+            servedTable: [],
+            alienFeatures: [],
+            alternativeAliens: [],
+            xValue: [],
+            yValue: [],
+            xRange: [],
+            yRange: [],
+            deliberationTime: [],
+            reward: [],
+            exploration: [],
+            bonusTrial: [],
+            betweenRoundTime: []
+        }
 
         // Make background gradients for each cycle:
         //cycle 1:
@@ -110,7 +133,7 @@ export default class Game{
         this.miscText.push(this.rewardText);
 
         this.totalRewardTextColor = "255, 190, 0"///"102, 94, 201";
-        this.totalRewardTextSize = Math.floor(this.GAME_WIDTH*0.04);
+        this.totalRewardTextSize = Math.floor(this.GAME_WIDTH*0.03);
         this.totalRewardText = new TextBox(this, this.btnLeft, this.GAME_HEIGHT*0.65,
              `Total $: 0`, "left", this.totalRewardTextSize, false, this.totalRewardTextColor);
         this.miscText.push(this.totalRewardText);
@@ -132,18 +155,26 @@ export default class Game{
 
 
         // Define how many cycles, i.e. the number of consecutive bandit tasks.
+        // create helper variable to store player moves, and exploration
         this.currentCycle = 0;
         this.totalCycles = 3;
+        this.playerMoves = [];
+        this.highscores = {
+            symbol1: [0, undefined, undefined],
+            symbol2: [0, undefined, undefined],
+            compositional: [0, undefined, undefined]
+        }
+
 
         /// Define parameters for reward functions in all cycles///
         // parameters for linear function
-        this.linearParamsCycle1 = [10, 1.8] // intercept and beta coefficient
-        this.linearParamsCycle2 = [30, -2.1]
-        this.linearParamsCycle3 = [3, 3]
+        this.linearParamsCycle1 = [3, 0.8] // intercept and beta coefficient
+        this.linearParamsCycle2 = [13, -1.2]
+        this.linearParamsCycle3 = [5, 1.3]
 
         this.linearParams = [this.linearParamsCycle1, this.linearParamsCycle2, this.linearParamsCycle3]
         // parameters for periodic function
-        this.periodicParamsCycle1 = [19, 10, 3, 1.4]; // 0: intercept, 1: beta (smoothness), 2: shift, 3: cycle length
+        this.periodicParamsCycle1 = [6, 10, 3, 1.4]; // 0: intercept, 1: beta (smoothness), 2: shift, 3: cycle length
         this.periodicParamsCycle2 = [18, 11, 4, 2];
         this.periodicParamsCycle3 = [18, 11, 4, 2];
 
@@ -277,6 +308,7 @@ export default class Game{
         // game:
 
         this.currentGameState = this.GAMESTATES.RUNNING;
+        this.bonusTrial = false;
 
         for (let elem in this.htmlList){
             this.htmlList[elem].style.display = "block";
@@ -288,10 +320,11 @@ export default class Game{
         // define game settings
         this.totalReward = 0;
         this.reward = 0;
-        this.totalTrials = 25;
+        this.totalTrials = 10;
         this.trialsSymbol1 = Math.floor(this.totalTrials/3);
         this.trialsSymbol2 = Math.floor(this.totalTrials/3);
         this.trialsCompositional = this.totalTrials - (this.trialsSymbol1 + this.trialsSymbol2);
+        this.trialMargin = Math.floor(this.totalTrials/8);
         this.trialList = [this.trialsSymbol1, this.trialsSymbol2, this.trialsCompositional];
         this.specialTrials = 20;
         this.noXTrials = 2;
@@ -320,7 +353,20 @@ export default class Game{
 
         this.xRange = [0, 10];
         this.yRange = [0, 10];
+        this.xSlider.min = this.xRange[0];
+        this.xSlider.max = this.xRange[1];
+        this.ySlider.min = this.yRange[0];
+        this.ySlider.max = this.yRange[1];
+        this.xSlider.value = 0;
+        this.ySlider.value = 0;
         this.changeSliderParams(this.xRange, this.yRange);
+
+        //
+        // this.xIngredient.update(this.xSlider.value);
+        // this.yIngredient.update(this.ySlider.value);
+
+        this.xValueText.change(this.xSlider.value);
+        this.yValueText.change(this.ySlider.value);
 
         // reset trial and reward texts
         this.totalRewardText.change(`Total $: ${this.totalReward}`);
@@ -338,6 +384,7 @@ export default class Game{
         for (let i = 0; i < 3; i++) {
             this.features = this.generateRandomAlien();
             this.currentRF = this.defineRewardFunction(this.features[0]);
+
             this.alien = new Alien(this, this.features[0], this.features[1], this.currentAlienImgs[1],
                  this.tableList[i], this.currentRF[0], this.currentRF[1]);
             this.alienList.push(this.alien);
@@ -392,46 +439,83 @@ export default class Game{
         this.alienCombinations = [[0, 0], [0, 1], [1, 0], [1, 1], [0, 0, 1, 1],
          [0, 1, 1, 0], [0, 0, 1, 0], [0, 1, 1, 1], [0, 0, 0, 1], [1, 1, 1, 0]];
 
-        if (this.trialList[0] > 4 || this.trialList[1] > 4){
-            this.combinationsIndex = getRandomInt(0, 3)
-            this.alienType = this.alienCombinations[this.combinationsIndex]
+        if (this.trialList[0] > this.trialMargin){
+            this.combinationsIndex = getRandomInt(0, 1);
+            this.alienType = this.alienCombinations[this.combinationsIndex];
+            // if (this.combinationsIndex >= 2){
+            //     this.trialList[1] -= 1;
+            // } else {
+            this.trialList[0] -= 1;
+
+
+
+        } else if (this.trialList[0] != 0) {
+            if (this.trialList[1] != 0){
+                this.combinationsIndex = getRandomInt(0, 3);
+            } else {
+                this.combinationsIndex = getRandomInt(0, 1);
+            }
+
+            this.alienType = this.alienCombinations[this.combinationsIndex];
             if (this.combinationsIndex >= 2){
                 this.trialList[1] -= 1;
             } else {
                 this.trialList[0] -= 1;
             }
-
-
-        } else if (this.trialList[0] != 0 || this.trialList[1] != 0) {
-            if (this.trialList[0] == 0){
+        } else if (this.trialList[1] > this.trialMargin) {
+            this.combinationsIndex = getRandomInt(2, 3);
+            this.alienType = this.alienCombinations[this.combinationsIndex];
+            this.trialList[1] -= 1;
+        } else if (this.trialList[1] != 0) {
+            if (this.trialList[2] != 0){
                 this.combinationsIndex = getRandomInt(2, this.alienCombinations.length - 1);
-            } else if (this.trialList[1] == 0) {
-                this.combinationsIndex = getRandomInt(0, this.alienCombinations.length - 3);
-                if (this.combinationsIndex >= 2){
-                    this.combinationsIndex += 2;
-                }
             } else {
-                this.combinationsIndex = getRandomInt(0, this.alienCombinations.length - 1)
-
+                this.combinationsIndex = getRandomInt(2, 3);
             }
 
-
             this.alienType = this.alienCombinations[this.combinationsIndex];
-
-            if (this.combinationsIndex >= 4){
-                this.trialList[2] -= 1;
-            } else if (this.combinationsIndex >= 2) {
+            if (this.combinationsIndex <= 3){
                 this.trialList[1] -= 1;
             } else {
-                this.trialList[0] -= 1;
+                this.trialList[2] -= 1;
             }
-
         } else {
-
             this.combinationsIndex = getRandomInt(4, this.alienCombinations.length - 1);
             this.alienType = this.alienCombinations[this.combinationsIndex];
-
         }
+
+
+        //
+        //  else if (this.trialList[0] != 0 || this.trialList[1] != 0) {
+        //     if (this.trialList[0] == 0){
+        //         this.combinationsIndex = getRandomInt(2, this.alienCombinations.length - 1);
+        //     } else if (this.trialList[1] == 0) {
+        //         this.combinationsIndex = getRandomInt(0, this.alienCombinations.length - 3);
+        //         if (this.combinationsIndex >= 2){
+        //             this.combinationsIndex += 2;
+        //         }
+        //     } else {
+        //         this.combinationsIndex = getRandomInt(0, this.alienCombinations.length - 1)
+        //
+        //     }
+        //
+        //
+        //     this.alienType = this.alienCombinations[this.combinationsIndex];
+        //
+        //     if (this.combinationsIndex >= 4){
+        //         this.trialList[2] -= 1;
+        //     } else if (this.combinationsIndex >= 2) {
+        //         this.trialList[1] -= 1;
+        //     } else {
+        //         this.trialList[0] -= 1;
+        //     }
+        //
+        // } else {
+        //
+        //     this.combinationsIndex = getRandomInt(4, this.alienCombinations.length - 1);
+        //     this.alienType = this.alienCombinations[this.combinationsIndex];
+        //
+        // }
 
         this.alienFeatures = this.alienType;
         this.alienImage = this.currentAlienImgs[0][this.combinationsIndex];
@@ -458,24 +542,32 @@ export default class Game{
 
 
     changeSliderParams(xRange, yRange){
-        this.xSlider.min = xRange[0];
-        this.xMinText.change(this.xSlider.min);
-
-        this.xSlider.max = xRange[1];
-        this.xMaxText.change(this.xSlider.max);
 
 
-        this.ySlider.min = yRange[0];
-        this.yMinText.change(this.ySlider.min);
+        this.xSliderMin = xRange[0];
+        this.xMinText.change(this.xSliderMin)
 
-        this.ySlider.max = yRange[1];
-        this.yMaxText.change(this.ySlider.max);
+        this.xSliderMax = xRange[1];
+        this.xMaxText.change(this.xSliderMax);
+        if (this.xSlider.value < this.xSliderMin){
+            this.xSlider.value = this.xSliderMin;
+        } else if (this.xSlider.value > this.xSliderMax) {
+            this.xSlider.value = this.xSliderMax;
+        }
 
 
+        this.ySliderMin = yRange[0];
+        this.yMinText.change(this.ySliderMin);
 
+        this.ySliderMax = yRange[1];
+        this.yMaxText.change(this.ySliderMax);
 
-        this.xSlider.value = this.xSlider.min;
-        this.ySlider.value = this.ySlider.min;
+        if (this.ySlider.value < this.ySliderMin){
+            this.ySlider.value = this.ySliderMin;
+        } else if (this.ySlider.value > this.ySliderMax) {
+            this.ySlider.value = this.ySliderMax;
+        }
+
 
         this.xIngredient.update(this.xSlider.value);
         this.yIngredient.update(this.ySlider.value);
@@ -483,26 +575,31 @@ export default class Game{
         this.xValueText.change(this.xSlider.value);
         this.yValueText.change(this.ySlider.value);
 
-        if (this.xSlider.max == this.xSlider.min){
+
+        if (this.xSliderMax == this.xSliderMin){
             this.xGradient = 0;
-            this.yGradient = ((this.ySlider.value - this.ySlider.min)/(this.ySlider.max - this.ySlider.min))*100;
+            this.yGradient = ((this.ySlider.value - this.ySlider.min)/(this.ySlider.max - this.ySlider.min));
             this.xSlider.style.opacity = 0.3;
             this.ySlider.style.opacity = 0.85;
-        } else if(this.ySlider.max == this.ySlider.min){
+        } else if(this.ySliderMax == this.ySliderMin){
             this.yGradient = 0;
-            this.xGradient = ((this.xSlider.value - this.xSlider.min)/(this.xSlider.max - this.xSlider.min))*100;
+            this.xGradient = ((this.xSlider.value - this.xSlider.min)/(this.xSlider.max - this.xSlider.min));
             this.xSlider.style.opacity = 0.85;
             this.ySlider.style.opacity = 0.3;
         } else {
-            this.xGradient = ((this.xSlider.value - this.xSlider.min)/(this.xSlider.max - this.xSlider.min))*100;
-            this.yGradient = ((this.ySlider.value - this.ySlider.min)/(this.ySlider.max - this.ySlider.min))*100;
+            this.xGradient = ((this.xSlider.value - this.xSlider.min)/(this.xSlider.max - this.xSlider.min));
+            this.yGradient = ((this.ySlider.value - this.ySlider.min)/(this.ySlider.max - this.ySlider.min));
             this.xSlider.style.opacity = 0.85;
             this.ySlider.style.opacity = 0.85;
         }
 
+        this.modifiedXColor = this.xSliderColor1.slice(0, -2);
+        this.modifiedXColor += `${this.xGradient})`;
+        this.modifiedYColor = this.ySliderColor1.slice(0, -2);
+        this.modifiedYColor += `${this.yGradient})`;
 
-        this.xColor = `linear-gradient(90deg, ${this.xSliderColor1} ${this.xGradient}%, ${this.xSliderColor2} ${this.xGradient}%)`;
-        this.yColor = `linear-gradient(90deg, ${this.ySliderColor1} ${this.yGradient}%, ${this.ySliderColor2} ${this.yGradient}%)`;
+        this.xColor = `linear-gradient(90deg, ${this.modifiedXColor} ${this.xGradient*100}%, ${this.xSliderColor2} ${this.xGradient*100}%)`;
+        this.yColor = `linear-gradient(90deg, ${this.modifiedYColor} ${this.yGradient*100}%, ${this.ySliderColor2} ${this.yGradient*100}%)`;
         this.xSlider.style.background = this.xColor;
         this.ySlider.style.background = this.yColor;
 
@@ -553,6 +650,8 @@ export default class Game{
 
     bonusRound(){
 
+        this.bonusTrial = true;
+
         this.lastAlienServed = false;
         this.currentTrial = 0;
         this.totalTrials = 3;
@@ -568,8 +667,16 @@ export default class Game{
 
         }
 
+
+
+
         this.bonusXRange = [10, 15];
         this.bonusYRange = this.bonusXRange;
+
+        this.xSlider.min = this.bonusXRange[0];
+        this.xSlider.max = this.bonusXRange[1];
+        this.ySlider.min = this.bonusYRange[0];
+        this.ySlider.max = this.bonusYRange[1];
 
         this.changeSliderParams(this.bonusXRange, this.bonusYRange);
 
@@ -580,9 +687,45 @@ export default class Game{
 
     }
 
+
+    saveTrialData(currentAlien, xVal, yVal){
+
+
+        this.participantData.cycle.push(this.currentCycle);
+        this.participantData.trials.push(this.currentTrial);
+        this.participantData.moves.push(this.playerMoves);
+        this.playerMoves = [];
+        this.participantData.servedTable.push(this.player.targetIndex);
+        this.participantData.alienFeatures.push(currentAlien.features);
+        if (this.player.targetIndex == 1){
+            this.participantData.alternativeAliens.push([this.tableList[0].currentCustomer.features, this.tableList[2].currentCustomer.features])
+        } else if (this.player.targetIndex == 0) {
+            this.participantData.alternativeAliens.push([this.tableList[1].currentCustomer.features, this.tableList[2].currentCustomer.features])
+        } else {
+            this.participantData.alternativeAliens.push([this.tableList[0].currentCustomer.features, this.tableList[1].currentCustomer.features])
+        }
+        this.participantData.xValue.push(xVal);
+        this.participantData.yValue.push(yVal);
+        this.participantData.xRange.push(this.xRange);
+        this.participantData.yRange.push(this.yRange);
+        this.participantData.deliberationTime.push(this.timer);
+        this.participantData.reward.push(this.reward);
+        this.participantData.exploration.push([currentAlien.xExploration, currentAlien.yExploration, currentAlien.exploration]);
+        this.participantData.bonusTrial.push(this.bonusTrial);
+
+        console.log(this.participantData);
+
+
+
+
+
+    }
+
     update(dt){
         // update method
         if (this.currentGameState === this.GAMESTATES.RUNNING){
+            this.timer += dt;
+
             this.player.update(dt);
 
             for (let alien in this.alienList){
@@ -602,7 +745,7 @@ export default class Game{
             }
 
         } else if (this.currentGameState === this.GAMESTATES.BONUSROUND) {
-
+            this.timer += dt;
             this.player.update(dt);
 
             for (let alien in this.alienList){
@@ -625,6 +768,7 @@ export default class Game{
             }
 
         } else {
+            this.betweenRoundTimer += dt;
             for (let elem in this.htmlList){
                 this.htmlList[elem].style.display = "none";
             }

@@ -16,11 +16,11 @@ let fullscreenWarning = document.getElementById("fullscreenWarning");
 
 let htmlElems = [fullscreenBtn, startBtn, fullscreenWarning];
 
-let inFullscreen = false;
+
 
 
 startBtn.onclick = function(){
-    if(inFullscreen){
+    if(document.fullscreenElement == document.documentElement){
         startGame();
         for (let elem in htmlElems){
             htmlElems[elem].style.display = "none";
@@ -33,10 +33,8 @@ startBtn.onclick = function(){
 fullscreenBtn.addEventListener('click', event => {
     if (document.fullscreenElement == document.documentElement){
         document.exitFullscreen();
-        inFullscreen = false;
     } else {
         document.documentElement.requestFullscreen();
-        inFullscreen = true;
         fullscreenWarning.style.display = "none";
     }
 
@@ -44,7 +42,6 @@ fullscreenBtn.addEventListener('click', event => {
 });
 
 function startGame(){
-    //startBtn.style.display = "none";
     let game  = new Game(1400, 600);
     game.startNewGame();
     let lastTime = 0;

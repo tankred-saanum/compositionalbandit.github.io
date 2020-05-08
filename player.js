@@ -41,6 +41,7 @@ export default class Player {
             this.targetIndex -= 1;
             this.currentTarget = this.tableList[this.targetIndex];
             this.xTarget = this.currentTarget.center - this.width/2;
+            this.game.playerMoves.push("Left")
         }
         this.currentWalkingImgs = this.leftAnimations;
 
@@ -53,6 +54,7 @@ export default class Player {
             this.targetIndex += 1;
             this.currentTarget = this.tableList[this.targetIndex];
             this.xTarget = this.currentTarget.center - this.width/2;
+            this.game.playerMoves.push("Right")
         }
 
         this.currentWalkingImgs = this.rightAnimations;

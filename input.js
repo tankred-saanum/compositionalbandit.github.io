@@ -12,6 +12,9 @@ export default class InputHandler {
 
                     if (game.currentGameState === game.GAMESTATES.BETWEENCYCLE){
                     game.currentCycle += 1;
+                    game.timer = 0;
+                    game.participantData.betweenRoundTime.push(game.betweenRoundTimer);
+                    game.betweenRoundTimer = 0;
                     game.startNewGame();
                     }
                     break;
@@ -20,18 +23,15 @@ export default class InputHandler {
 
         game.submitButton.addEventListener('click', event => {
             if (game.player.canSelect && game.player.currentTarget.currentCustomer.readyToServe){
-                game.currentTrial += 1;
-                game.trialText.change(`Trials left: ${game.totalTrials - game.currentTrial}`);
                 game.player.currentTarget.currentCustomer.giveReward(game.xSlider.value, game.ySlider.value);
                 game.totalRewardText.change(`Total $: ${game.totalReward}`);
                 game.rewardText.change(game.reward);
+                game.saveTrialData(game.player.currentTarget.currentCustomer, game.xSlider.value, game.ySlider.value);
+                game.timer = 0;
+                game.currentTrial += 1;
+                game.trialText.change(`Trials left: ${game.totalTrials - game.currentTrial}`);
                 if (game.totalTrials - game.currentTrial == 0){
                     game.lastAlienServed = true;
-                    // if (game.currentCycle + 1 < game.totalCycles) {
-                    //     game.lastAlienServed = true;
-                    // } else {
-                    //     game.currentGameState = game.GAMESTATES.FINISHED;
-                    // }
                 } else if(game.currentGameState !== game.GAMESTATES.BONUSROUND) {
                     game.newTrial();
                 }
@@ -40,30 +40,41 @@ export default class InputHandler {
             });
 
         game.xSlider.addEventListener('input', event => {
+            if (game.xSlider.value < game.xSliderMin){
+                game.xSlider.value = game.xSliderMin
+            }else if (game.xSlider.value > game.xSliderMax) {
+                game.xSlider.value = game.xSliderMax
+            }
             game.xValueText.change(game.xSlider.value);
             game.xIngredient.update(game.xSlider.value);
-            this.gradient = ((game.xSlider.value-game.xSlider.min)/(game.xSlider.max - game.xSlider.min));
+            this.gradient = ((game.xSlider.value - game.xSlider.min)/(game.xSlider.max - game.xSlider.min));
             this.modifiedRgba = game.xSliderColor1.slice(0, -2);
             this.modifiedRgba += `${this.gradient})`;
             this.xColor = `linear-gradient(90deg, ${this.modifiedRgba} ${this.gradient*100}%, ${game.xSliderColor2} ${this.gradient*100}%)`;
             game.xSlider.style.background = this.xColor;
+
         });
 
         game.xSlider.addEventListener('mouseenter', event => {
-            if (game.xSlider.max != game.xSlider.min){
+            if (game.xSliderMax != game.xSliderMin){
                 game.xSlider.style.opacity = 1;
             }
         })
 
         game.xSlider.addEventListener('mouseleave', event => {
-            if (game.xSlider.max != game.xSlider.min){
+            if (game.xSliderMax != game.xSliderMin){
             game.xSlider.style.opacity = 0.85;
             }
         })
 
         game.ySlider.addEventListener('input', event => {
+            if (game.ySlider.value < game.ySliderMin){
+                game.ySlider.value = game.ySliderMin
+            }else if (game.ySlider.value > game.ySliderMax) {
+                game.ySlider.value = game.ySliderMax
+            }
             game.yValueText.change(game.ySlider.value);
-            this.gradient = ((game.ySlider.value-game.ySlider.min)/(game.ySlider.max - game.ySlider.min));
+            this.gradient = ((game.ySlider.value - game.ySlider.min)/(game.ySlider.max - game.ySlider.min))
             this.modifiedRgba = game.ySliderColor1.slice(0, -2);
             this.modifiedRgba += `${this.gradient})`;
             this.yColor = `linear-gradient(90deg, ${this.modifiedRgba} ${this.gradient*100}%, ${game.ySliderColor2} ${this.gradient*100}%)`;
@@ -73,13 +84,13 @@ export default class InputHandler {
 
 
         game.ySlider.addEventListener('mouseenter', event => {
-            if (game.ySlider.max != game.ySlider.min){
+            if (game.ySliderMax != game.ySliderMin){
                 game.ySlider.style.opacity = 1;
             }
         })
 
         game.ySlider.addEventListener('mouseleave', event => {
-            if (game.ySlider.max != game.ySlider.min){
+            if (game.ySliderMax != game.ySliderMin){
             game.ySlider.style.opacity = 0.85;
             }
         })
