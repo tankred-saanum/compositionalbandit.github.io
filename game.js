@@ -320,7 +320,7 @@ export default class Game{
         // define game settings
         this.totalReward = 0;
         this.reward = 0;
-        this.totalTrials = 10;
+        this.totalTrials = 30;
         this.trialsSymbol1 = Math.floor(this.totalTrials/3);
         this.trialsSymbol2 = Math.floor(this.totalTrials/3);
         this.trialsCompositional = this.totalTrials - (this.trialsSymbol1 + this.trialsSymbol2);
