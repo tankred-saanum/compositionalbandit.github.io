@@ -168,9 +168,9 @@ export default class Game{
 
         /// Define parameters for reward functions in all cycles///
         // parameters for linear function
-        this.linearParamsCycle1 = [3, 0.8] // intercept and beta coefficient
-        this.linearParamsCycle2 = [13, -1.2]
-        this.linearParamsCycle3 = [5, 1.3]
+        this.linearParamsCycle1 = [0, 1] // intercept and beta coefficient
+        this.linearParamsCycle2 = [0, 1.3]
+        this.linearParamsCycle3 = [1, 1.7]
 
         this.linearParams = [this.linearParamsCycle1, this.linearParamsCycle2, this.linearParamsCycle3]
         // parameters for periodic function
@@ -328,9 +328,9 @@ export default class Game{
         this.trialList = [this.trialsSymbol1, this.trialsSymbol2, this.trialsCompositional];
         this.specialTrials = 20;
         this.noXTrials = 2;
-        this.noXTrialNumbers = [5, 9];
+        this.noXTrialNumbers = [5, this.trialsSymbol1 + 4];
         this.noYTrials = 2;
-        this.noYTrialNumbers = [3, 7];
+        this.noYTrialNumbers = [3, this.trialsSymbol1 + 2];
         this.currentTrial = 0;
 
         // set background to the right color gradient, depending on current cycle
@@ -361,9 +361,7 @@ export default class Game{
         this.ySlider.value = 0;
         this.changeSliderParams(this.xRange, this.yRange);
 
-        //
-        // this.xIngredient.update(this.xSlider.value);
-        // this.yIngredient.update(this.ySlider.value);
+
 
         this.xValueText.change(this.xSlider.value);
         this.yValueText.change(this.ySlider.value);
@@ -442,9 +440,7 @@ export default class Game{
         if (this.trialList[0] > this.trialMargin){
             this.combinationsIndex = getRandomInt(0, 1);
             this.alienType = this.alienCombinations[this.combinationsIndex];
-            // if (this.combinationsIndex >= 2){
-            //     this.trialList[1] -= 1;
-            // } else {
+
             this.trialList[0] -= 1;
 
 
@@ -484,38 +480,6 @@ export default class Game{
             this.alienType = this.alienCombinations[this.combinationsIndex];
         }
 
-
-        //
-        //  else if (this.trialList[0] != 0 || this.trialList[1] != 0) {
-        //     if (this.trialList[0] == 0){
-        //         this.combinationsIndex = getRandomInt(2, this.alienCombinations.length - 1);
-        //     } else if (this.trialList[1] == 0) {
-        //         this.combinationsIndex = getRandomInt(0, this.alienCombinations.length - 3);
-        //         if (this.combinationsIndex >= 2){
-        //             this.combinationsIndex += 2;
-        //         }
-        //     } else {
-        //         this.combinationsIndex = getRandomInt(0, this.alienCombinations.length - 1)
-        //
-        //     }
-        //
-        //
-        //     this.alienType = this.alienCombinations[this.combinationsIndex];
-        //
-        //     if (this.combinationsIndex >= 4){
-        //         this.trialList[2] -= 1;
-        //     } else if (this.combinationsIndex >= 2) {
-        //         this.trialList[1] -= 1;
-        //     } else {
-        //         this.trialList[0] -= 1;
-        //     }
-        //
-        // } else {
-        //
-        //     this.combinationsIndex = getRandomInt(4, this.alienCombinations.length - 1);
-        //     this.alienType = this.alienCombinations[this.combinationsIndex];
-        //
-        // }
 
         this.alienFeatures = this.alienType;
         this.alienImage = this.currentAlienImgs[0][this.combinationsIndex];
@@ -581,16 +545,20 @@ export default class Game{
             this.yGradient = ((this.ySlider.value - this.ySlider.min)/(this.ySlider.max - this.ySlider.min));
             this.xSlider.style.opacity = 0.3;
             this.ySlider.style.opacity = 0.85;
+            this.xIngredient.setNotAvailable();
         } else if(this.ySliderMax == this.ySliderMin){
             this.yGradient = 0;
             this.xGradient = ((this.xSlider.value - this.xSlider.min)/(this.xSlider.max - this.xSlider.min));
             this.xSlider.style.opacity = 0.85;
             this.ySlider.style.opacity = 0.3;
+            this.yIngredient.setNotAvailable();
         } else {
             this.xGradient = ((this.xSlider.value - this.xSlider.min)/(this.xSlider.max - this.xSlider.min));
             this.yGradient = ((this.ySlider.value - this.ySlider.min)/(this.ySlider.max - this.ySlider.min));
             this.xSlider.style.opacity = 0.85;
             this.ySlider.style.opacity = 0.85;
+            this.xIngredient.setAvailable()
+            this.yIngredient.setAvailable()
         }
 
         this.modifiedXColor = this.xSliderColor1.slice(0, -2);

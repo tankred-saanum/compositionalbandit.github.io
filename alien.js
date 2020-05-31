@@ -130,6 +130,7 @@ export default class Alien{
                 this.complain = true;
                 if (this.leaveTimer > this.leaveTime){
                     this.xtarget = this.game.GAME_WIDTH + (2*this.width);
+                    this.game.alienList.push(this.game.alienList.splice(this.game.alienList.indexOf(this), 1)[0]);
                 }
             }
         }
@@ -139,8 +140,7 @@ export default class Alien{
 
     giveReward(x, y) {
         this.complain = false;
-        this.game.alienList.push(this.game.alienList.splice(this.game.alienList.indexOf(this), 1)[0]);
-        //this.xtarget = this.game.GAME_WIDTH + (2*this.width);
+        // this.game.alienList.push(this.game.alienList.splice(this.game.alienList.indexOf(this), 1)[0]);
         this.xValue = parseInt(x);
         this.yValue = parseInt(y);
 
