@@ -5,15 +5,18 @@ import Alien from './alien.js'
 import TextBox from './textBox.js'
 import RewardText from './rewardText.js'
 import Ingredient from './ingredient.js'
-import {linear, periodic, rbf, linearPeriodic, linearRbf, periodicRbf,
+import {linear, periodic, rbf, sawtooth, linearPeriodic, linearRbf, periodicRbf,
      getRandomInt, getRandomFloat} from './rewardFunctions.js'
 
 
 
 export default class Game{
-    constructor(width, height){
+    constructor(ref){
 
         // define canvas and its dimensions
+
+        //this.database = database;
+        this.ref = ref;
 
         this.timer = 0;
         this.betweenRoundTimer = 0;
@@ -45,6 +48,7 @@ export default class Game{
             servedTable: [],
             alienFeatures: [],
             alternativeAliens: [],
+            waitingTimes: [],
             xValue: [],
             yValue: [],
             xRange: [],
@@ -168,26 +172,32 @@ export default class Game{
 
         /// Define parameters for reward functions in all cycles///
         // parameters for linear function
-        this.linearParamsCycle1 = [0, 1] // intercept and beta coefficient
-        this.linearParamsCycle2 = [0, 1.3]
-        this.linearParamsCycle3 = [1, 1.7]
+        this.linearParamsCycle1 = [0, 1.1] // intercept and beta coefficient
+        this.linearParamsCycle2 = [0, 1.4]
+        this.linearParamsCycle3 = [0, 0.7]
 
         this.linearParams = [this.linearParamsCycle1, this.linearParamsCycle2, this.linearParamsCycle3]
         // parameters for periodic function
-        this.periodicParamsCycle1 = [6, 10, 3, 1.4]; // 0: intercept, 1: beta (smoothness), 2: shift, 3: cycle length
-        this.periodicParamsCycle2 = [18, 11, 4, 2];
+        // fix this
+        this.periodicParamsCycle1 = [6, 10, 3, 1.4]; // 0: intercept, 1: beta, 2: shift, 3: cycle length
+        this.periodicParamsCycle2 = [5, 5, 0, 0.5];
         this.periodicParamsCycle3 = [18, 11, 4, 2];
 
-        // rbf parameters
-        this.rbfParams = [9, 17, 0.7, 6];
+        // sawtooth parameters
 
-        this.allParameters = [[this.linearParamsCycle1, this.periodicParamsCycle1],
-            [this.linearParamsCycle2, this.periodicParamsCycle2], [[this.linearParamsCycle3, this.periodicParamsCycle3], this.rbfParams]];
+        this.sawtoothParams = [5, 4]  // intercept and beta
+
+        // rbf parameters
+        this.rbfParams = [-4, 14, 2.6, 7]; // -4 intercept, beta = 14, lengthscale = 2.6, optimum = 7
+
+        this.allParameters = [[this.linearParamsCycle1, this.sawtoothParams],
+            [this.linearParamsCycle2, this.periodicParamsCycle2], [this.linearParamsCycle3, this.rbfParams]];
+
 
         // define which reward functions should appear in which cycle
-        this.rfCycle1 = [linear, periodic];
+        this.rfCycle1 = [linear, sawtooth];
         this.rfCycle2 = [linear, periodic];
-        this.rfCycle3 = [linearPeriodic, rbf];
+        this.rfCycle3 = [linear, rbf];
 
         this.allRewardFunctions = [this.rfCycle1, this.rfCycle2, this.rfCycle3];
 
@@ -326,12 +336,13 @@ export default class Game{
         this.trialsCompositional = this.totalTrials - (this.trialsSymbol1 + this.trialsSymbol2);
         this.trialMargin = Math.floor(this.totalTrials/8);
         this.trialList = [this.trialsSymbol1, this.trialsSymbol2, this.trialsCompositional];
-        this.specialTrials = 20;
+        this.specialTrials = Math.floor(this.totalTrials*0.2);
         this.noXTrials = 2;
-        this.noXTrialNumbers = [5, this.trialsSymbol1 + 4];
+        this.noXTrialNumbers = [this.trialsSymbol1 - 3, this.trialsSymbol1 + this.trialsSymbol2 - 3];
         this.noYTrials = 2;
-        this.noYTrialNumbers = [3, this.trialsSymbol1 + 2];
+        this.noYTrialNumbers = [this.trialsSymbol1 - 5, this.trialsSymbol1 + this.trialsSymbol2 - 5];
         this.currentTrial = 0;
+        this.trialIsSpecial = 0;
 
         // set background to the right color gradient, depending on current cycle
         this.background = this.gradientCycles[this.currentCycle]
@@ -602,6 +613,8 @@ export default class Game{
             this.noX = false;
             this.noY = false;
             this.trialIsSpecial = getRandomInt(0, 1);
+        } else {
+            this.trialIsSpecial = 0;
         }
 
         if (this.trialIsSpecial == 1){
@@ -638,7 +651,7 @@ export default class Game{
 
 
 
-        this.bonusXRange = [10, 15];
+        this.bonusXRange = [11, 15];
         this.bonusYRange = this.bonusXRange;
 
         this.xSlider.min = this.bonusXRange[0];
@@ -672,6 +685,14 @@ export default class Game{
         } else {
             this.participantData.alternativeAliens.push([this.tableList[0].currentCustomer.features, this.tableList[1].currentCustomer.features])
         }
+
+        this.waitingTimeList = [];
+        for (let table in this.tableList){
+            this.waitingTime = this.tableList[table].currentCustomer.complainCounter;
+            this.waitingTimeList.push(this.waitingTime);
+        }
+        this.participantData.waitingTimes.push(this.waitingTimeList);
+
         this.participantData.xValue.push(xVal);
         this.participantData.yValue.push(yVal);
         this.participantData.xRange.push(this.xRange);
@@ -681,12 +702,11 @@ export default class Game{
         this.participantData.exploration.push([currentAlien.xExploration, currentAlien.yExploration, currentAlien.exploration]);
         this.participantData.bonusTrial.push(this.bonusTrial);
 
-        console.log(this.participantData);
 
+    }
 
-
-
-
+    saveToDatabase(){
+        this.ref.push(this.participantData);
     }
 
     update(dt){
@@ -730,6 +750,10 @@ export default class Game{
             if (this.lastAlienServed && this.rewardText.hasFaded){
                 if (this.currentCycle == (this.totalCycles - 1)){
                     this.currentGameState = this.GAMESTATES.FINISHED;
+
+                    this.saveToDatabase()
+
+
                 } else {
                 this.currentGameState = this.GAMESTATES.BETWEENCYCLE;
                 }

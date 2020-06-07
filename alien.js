@@ -53,11 +53,13 @@ export default class Alien{
         this.hasBeenServed = false;
         this.table.currentCustomer = this;
 
+        this.complainCounter = 0;
+        this.complainThreshold = 4;
         this.complainText = "What is taking so long?";
-        this.complainTime = 15000;
+        //this.complainTime = 100000;
         this.textSize = Math.floor(this.game.GAME_WIDTH * 0.02);
         this.complain = false;
-        this.timerExists = false;
+        //this.timerExists = false;
         this.leaveTime = 500;
         this.leaveTimer = 0;
         this.waitingPenality = 1;
@@ -114,16 +116,16 @@ export default class Alien{
             this.currentImg = this.standingImg;
             if (!this.hasBeenServed){
                 this.readyToServe = true;
-                if (!this.timerExists){
-                    this.firstTime = this.game.timer
-                    this.newTime = this.game.timer;
-                    this.timerExists = true;
-                }
-                this.newTime += (this.game.timer - this.newTime);
-                if(this.newTime - this.firstTime > this.complainTime){
-                    this.complain = true;
-                    this.waitingPenality = 0.7
-                }
+                // if (!this.timerExists){
+                //     this.firstTime = this.game.timer
+                //     this.newTime = this.game.timer;
+                //     this.timerExists = true;
+                // }
+                // this.newTime += (this.game.timer - this.newTime);
+                // if(this.newTime - this.firstTime > this.complainTime){
+                //     this.complain = true;
+                //     this.waitingPenality = 0.7
+                // }
             } else if(this.x < this.game.GAME_WIDTH){
                 this.leaveTimer += (this.game.timer - this.leaveTimer);
                 this.complainText = "Thank you";
@@ -136,6 +138,19 @@ export default class Alien{
         }
 
 
+    }
+
+    updateWaitingTime(){
+        if (this.readyToServe && !this.hasBeenServed){
+            this.complainCounter += 1;
+            if (this.complainCounter == this.complainThreshold){
+                this.complain = true;
+            } else if (this.complainCounter > this.complainThreshold) {
+                this.complain = true;
+                this.waitingPenality = 0.5;
+            }
+
+        }
     }
 
     giveReward(x, y) {

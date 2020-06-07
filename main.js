@@ -1,5 +1,12 @@
 import Game from './game.js'
 
+////////////////////////////////////////////
+// create firebase database and reference
+var database = firebase.database()
+var ref = database.ref("participantData")
+///////////////////////////////////////////
+
+
 // Hide HTML elements used in game
 let xSlider = document.getElementById("xSlider");
 xSlider.style.display = "none";
@@ -42,11 +49,12 @@ fullscreenBtn.addEventListener('click', event => {
 });
 
 function startGame(){
-    let game  = new Game(1400, 600);
+    let game  = new Game(ref);
     game.startNewGame();
     let lastTime = 0;
 
     function gameLoop(timestamp){
+
         let dt = timestamp - lastTime;
         lastTime = timestamp;
 

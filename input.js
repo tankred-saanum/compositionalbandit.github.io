@@ -13,7 +13,7 @@ export default class InputHandler {
                     if (game.currentGameState === game.GAMESTATES.BETWEENCYCLE){
                     game.currentCycle += 1;
                     game.timer = 0;
-                    game.participantData.betweenRoundTime.push(game.betweenRoundTimer);
+                    game.participantData.betweenRoundTime.push(game.betweenRoundTimer)
                     game.betweenRoundTimer = 0;
                     game.startNewGame();
                     }
@@ -23,13 +23,24 @@ export default class InputHandler {
 
         game.submitButton.addEventListener('click', event => {
             if (game.player.canSelect && game.player.currentTarget.currentCustomer.readyToServe){
+
+                // get reward from alien
                 game.player.currentTarget.currentCustomer.giveReward(game.xSlider.value, game.ySlider.value);
+                // update display
                 game.totalRewardText.change(`Total $: ${game.totalReward}`);
                 game.rewardText.change(game.reward);
-                game.saveTrialData(game.player.currentTarget.currentCustomer, game.xSlider.value, game.ySlider.value);
+                // save data
+                game.saveTrialData(game.player.currentTarget.currentCustomer, parseInt(game.xSlider.value), parseInt(game.ySlider.value));
+
                 game.timer = 0;
                 game.currentTrial += 1;
                 game.trialText.change(`Trials left: ${game.totalTrials - game.currentTrial}`);
+
+                // update waiting time for aliens after receiving reward
+                for (let table in game.tableList){
+                    game.tableList[table].currentCustomer.updateWaitingTime();
+                }
+                // advance to next trial if not bonus round
                 if (game.totalTrials - game.currentTrial == 0){
                     game.lastAlienServed = true;
                 } else if(game.currentGameState !== game.GAMESTATES.BONUSROUND) {

@@ -48,7 +48,6 @@ export default class Player {
     }
 
 
-
     moveRight() {
         if (this.targetIndex < this.tableList.length - 1){
             this.targetIndex += 1;

@@ -7,8 +7,11 @@ export function rbf(x, parameters){
     let beta = parameters[1];
     let lengthscale = parameters[2];
     let optimum = parameters[3];
-    return intercept + Math.exp(-((optimum-x)**2)/(2*(lengthscale**2)))
+
+    return intercept + (beta* Math.exp(-((optimum-x)**2)/(2*(lengthscale**2))))
 }
+
+
 //Linear
 export function linear(x, parameters) {
     let intercept = parameters[0];
@@ -17,13 +20,24 @@ export function linear(x, parameters) {
 
 }
 
-// Periodic
 export function periodic(x, parameters) {
     let intercept = parameters[0];
     let beta = parameters[1];
     let shift = parameters[2];
-    let cycleLength = parameters[3];
-    return intercept + ((Math.sin(shift + x*cycleLength)) * beta);
+    let periodicity = parameters[3];
+
+    return intercept + (beta * (Math.sin(x * (periodicity * Math.PI))));
+}
+
+export function sawtooth(x, parameters) {
+    let intercept = parameters[0];
+    let beta = parameters[1];
+    if (x%2 != 0){
+        return intercept + beta
+    } else {
+        return intercept - beta
+    }
+
 }
 
 // Linear + periodic / 2
