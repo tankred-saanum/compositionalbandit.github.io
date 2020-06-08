@@ -188,7 +188,7 @@ export default class Game{
         this.sawtoothParams = [5, 4]  // intercept and beta
 
         // rbf parameters
-        this.rbfParams = [-4, 14, 2.6, 7]; // -4 intercept, beta = 14, lengthscale = 2.6, optimum = 7
+        this.rbfParams = [-2, 12, 2.6, 7]; // -2 intercept, beta = 12, lengthscale = 2.6, optimum = 7
 
         this.allParameters = [[this.linearParamsCycle1, this.sawtoothParams],
             [this.linearParamsCycle2, this.periodicParamsCycle2], [this.linearParamsCycle3, this.rbfParams]];

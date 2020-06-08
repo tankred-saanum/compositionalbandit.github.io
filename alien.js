@@ -116,16 +116,6 @@ export default class Alien{
             this.currentImg = this.standingImg;
             if (!this.hasBeenServed){
                 this.readyToServe = true;
-                // if (!this.timerExists){
-                //     this.firstTime = this.game.timer
-                //     this.newTime = this.game.timer;
-                //     this.timerExists = true;
-                // }
-                // this.newTime += (this.game.timer - this.newTime);
-                // if(this.newTime - this.firstTime > this.complainTime){
-                //     this.complain = true;
-                //     this.waitingPenality = 0.7
-                // }
             } else if(this.x < this.game.GAME_WIDTH){
                 this.leaveTimer += (this.game.timer - this.leaveTimer);
                 this.complainText = "Thank you";
