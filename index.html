@@ -10,6 +10,16 @@
 </head>
 <body>
 
+    <div id="page0" style="display:none">
+    <h2><center><font FACE="bookman">Tutorial</font><center></h2>
+    <canvas id = "tutorialScreen" width="200" height="200" ></canvas>
+    <button type="button" id="contButton" class = "instructionsButton" style = "display:block" >Continue to experiment</button>
+    </div>
+
+    <div id="wrongDevicePage" style="display:none">
+        <p><b> You cannot complete this experiment on your phone or your tablet. Please use a laptop or personal computer.</b></p>
+    </div>
+
     <canvas id = "gameScreen" width="1400" height="500" ></canvas>
 
     <input type="range" min="0" max="10" value="5" class="xSlider" id="xSlider">
