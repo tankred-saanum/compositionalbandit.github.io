@@ -23,7 +23,13 @@ let fullscreenWarning = document.getElementById("fullscreenWarning");
 
 let htmlElems = [fullscreenBtn, startBtn, fullscreenWarning];
 
-
+function checkDevice(){
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+        document.getElementById(`page${currentPage}`).style.display = "none";
+        document.getElementById("wrongDevicePage").style.display = "block";
+    }
+}
+checkDevice();
 
 
 startBtn.onclick = function(){
