@@ -6,7 +6,7 @@ var database = firebase.database()
 var ref = database.ref("participantData")
 ///////////////////////////////////////////
 
-
+let currentPage = 1
 // Hide HTML elements used in game
 let xSlider = document.getElementById("xSlider");
 xSlider.style.display = "none";
