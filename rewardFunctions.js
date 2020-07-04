@@ -61,15 +61,10 @@ export function periodicRbf(x, params){
     return (periodic(x, params1) + rbf(x, params2))/2
 }
 
-// function for getting a random float
-export function getRandomFloat(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
-
-// function for getting random int, [incluse min, inclusive max]
-export function getRandomInt(min, max) {
-    // min = Math.ceil(min);
-    // max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+// Standard Normal variate using Box-Muller transform.
+function gaussianNoise() {
+    var u = 0, v = 0;
+    while(u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+    while(v === 0) v = Math.random();
+    return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
 }

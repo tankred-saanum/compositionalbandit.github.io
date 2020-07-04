@@ -10,7 +10,7 @@ export default class Player {
         this.height = Math.floor(this.gameHeight*0.22);
 
         this.tableList = tables;
-        this.targetIndex = 1
+        this.targetIndex = Math.floor(this.tableList.length / 2)
         this.currentTarget = this.tableList[this.targetIndex];
         this.xTarget = this.currentTarget.center - this.width/2
 
@@ -107,10 +107,12 @@ export default class Player {
         } else {
             this.canSelect = true;
             this.currentImg = this.standingImg;
-            if (this.currentTarget.currentCustomer.readyToServe == true){
-                this.game.submitButton.style.opacity = "1";
-            } else {
-                this.game.submitButton.style.opacity = "0.5";
+            if(this.currentTarget.currentCustomer != undefined){
+                if (this.currentTarget.currentCustomer.readyToServe == true){
+                    this.game.submitButton.style.opacity = "1";
+                } else {
+                    this.game.submitButton.style.opacity = "0.5";
+                }
             }
         }
 

@@ -5,11 +5,107 @@
 }
 
 
-body {
+#body{
     margin: 0;
-    overflow: hidden;
+    overflow: auto;
+
 }
 
+/* ///////////////////////////////// */
+/* styling for pages before experiment */
+#instructionsWrapper {
+  padding-right: 40px;
+  padding-left: 40px;
+  /* margin-right: auto;
+  margin-left: auto; */
+
+  /* position: absolute; */
+  height: 100%;
+  overflow: auto;
+
+
+  font-family: arial;
+  font-size: 15px;
+
+}
+.mdl-card__actions{
+    text-align: left;
+    padding-left: 40px;
+}
+.informedConsent{
+    padding-right: 40px;
+    padding-left: 40px;
+    /* margin-right: auto;
+    margin-left: auto; */
+
+    /* position: absolute; */
+    height: 100%;
+    overflow: auto;
+
+
+    font-family: arial;
+    font-size: 15px;
+}
+.demographicsDiv{
+    padding-right: 40px;
+    padding-left: 40px;
+    /* margin-right: auto;
+    margin-left: auto; */
+
+    /* position: absolute; */
+    height: 100%;
+    overflow: auto;
+
+
+    font-family: arial;
+    font-size: 15px;
+}
+.endPage{
+    padding-right: 40px;
+    padding-left: 40px;
+    /* margin-right: auto;
+    margin-left: auto; */
+
+    /* position: absolute; */
+    height: 100%;
+    overflow: auto;
+
+
+    font-family: arial;
+    font-size: 15px;
+}
+/* #imgDiv{
+    float: right;
+    text-align: right;
+} */
+.tutorialElement{
+
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+
+}
+
+
+/* ////////////////////////////// */
+
+.tutorialWrapper{
+    text-align: center;
+
+    font-family: arial;
+    font-size: 15px;
+    font-weight: bold;
+
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+/* .tutorialHeader{
+    text-align: center;
+} */
+/* Styling for experiment elements */
 .submitButton{
     border: none;
     background-color: rgb(255, 69, 69);
@@ -26,6 +122,12 @@ body {
     position: absolute;
     box-shadow: 0 9px #999;
 
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+
 }
 .submitButton:hover {
 
@@ -41,6 +143,17 @@ body {
     font-weight: bold;
 }
 
+.instructionsButton{
+    padding: 0.2% 0.5%;
+    font-family: Georgia, serif;
+    font-size: 15px;
+}
+.tutorialButton{
+    padding: 0.2% 0.5%;
+    font-family: Georgia, serif;
+    font-size: 15px;
+}
+
 
 .wrapper{
     display: flex;
@@ -49,14 +162,14 @@ body {
 }
 .startGameBtn{
     border: none;
-    background-color: rgb(125, 164, 185);
-    color: rgb(32, 32, 32);
+    background-color: rgb(166, 167, 171);
+    /* color: rgb(32, 32, 32); */
     text-align: center;
-    font-size: 40px;
-    border-radius: 20px;
-    font-family: Georgia, serif;
+    font-size: 20px;
+    border-radius: 10px;
+    /* font-family: Georgia, serif; */
     font-weight: bold;
-    padding: 1% 7%;
+    padding: 2% 4%;
     position: absolute;
     top: 30%;
 
@@ -64,7 +177,7 @@ body {
 
 .startGameBtn:hover{
 
-    background-color: rgb(90, 122, 139);
+    background-color: rgb(120, 120, 120);
 
 }
 

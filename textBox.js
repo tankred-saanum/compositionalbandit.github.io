@@ -55,7 +55,7 @@ export default class TextBox {
             if (this.alpha < this.targetAlpha && this.targetAlpha === 1){
                 this.alpha += 0.025;
             } else if (this.alpha > this.targetAlpha && this.targetAlpha ===0) {
-                this.alpha -= 0.008;
+                this.alpha -= 0.004;
             } else {
                 if (this.targetAlpha == 1){
                     this.targetAlpha = 0;

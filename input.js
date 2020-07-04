@@ -8,12 +8,21 @@ export default class InputHandler {
                 case 68:
                     game.player.moveRight();
                     break;
+
+                case 37:
+                    game.player.moveLeft();
+                    break;
+
+                case 39:
+                    game.player.moveRight();
+                    break;
+
                 case 13:
 
                     if (game.currentGameState === game.GAMESTATES.BETWEENCYCLE){
                     game.currentCycle += 1;
                     game.timer = 0;
-                    game.participantData.betweenRoundTime.push(game.betweenRoundTimer)
+                    game.generalData.betweenRoundTime.push(game.betweenRoundTimer)
                     game.betweenRoundTimer = 0;
                     game.startNewGame();
                     }
@@ -22,35 +31,47 @@ export default class InputHandler {
         });
 
         game.submitButton.addEventListener('click', event => {
-            if (game.player.canSelect && game.player.currentTarget.currentCustomer.readyToServe){
+            if(game.player.currentTarget.currentCustomer != undefined){
+                if (game.player.canSelect && game.player.currentTarget.currentCustomer.readyToServe){
 
-                // get reward from alien
-                game.player.currentTarget.currentCustomer.giveReward(game.xSlider.value, game.ySlider.value);
-                // update display
-                game.totalRewardText.change(`Total $: ${game.totalReward}`);
-                game.rewardText.change(game.reward);
-                // save data
-                game.saveTrialData(game.player.currentTarget.currentCustomer, parseInt(game.xSlider.value), parseInt(game.ySlider.value));
+                    // get reward from alien
+                    game.player.currentTarget.currentCustomer.giveReward(game.xSlider.value, game.ySlider.value);
+                    // update display
+                    game.totalRewardText.change(`Total $: ${game.totalReward}`);
+                    game.rewardText.change(game.reward);
+                    // save data
+                    game.saveTrialData(game.player.currentTarget.currentCustomer, parseInt(game.xSlider.value), parseInt(game.ySlider.value));
 
-                game.timer = 0;
-                game.currentTrial += 1;
-                game.trialText.change(`Trials left: ${game.totalTrials - game.currentTrial}`);
+                    game.timer = 0;
+                    game.currentTrial += 1;
+                    game.trialText.change(`Customers left: ${game.totalTrials - game.currentTrial}`);
 
-                // update waiting time for aliens after receiving reward
-                for (let table in game.tableList){
-                    game.tableList[table].currentCustomer.updateWaitingTime();
-                }
-                // advance to next trial if not bonus round
-                if (game.totalTrials - game.currentTrial == 0){
-                    game.lastAlienServed = true;
-                } else if(game.currentGameState !== game.GAMESTATES.BONUSROUND) {
-                    game.newTrial();
+                    // update waiting time for aliens after receiving reward
+                    if (game.numSimultaneousAliens == game.tableList.length){
+                        for (let table in game.tableList){
+                            game.tableList[table].currentCustomer.updateWaitingTime();
+                        }
+                    }
+                    // advance to next trial if not bonus round
+                    if (game.totalTrials - game.currentTrial == 0){
+                        game.lastAlienServed = true;
+                    } else if(game.currentGameState !== game.GAMESTATES.BONUSROUND) {
+                        game.newTrial();
+                    } else {
+                        game.newBonusTrial()
+                    }
                 }
             }
-
-            });
+        });
 
         game.xSlider.addEventListener('input', event => {
+            if (window.getSelection){
+                window.getSelection().removeAllRanges();
+            } else if (document.selection){
+                document.selection.empty();
+            }
+
+
             if (game.xSlider.value < game.xSliderMin){
                 game.xSlider.value = game.xSliderMin
             }else if (game.xSlider.value > game.xSliderMax) {
@@ -79,6 +100,13 @@ export default class InputHandler {
         })
 
         game.ySlider.addEventListener('input', event => {
+
+            if (window.getSelection){
+                window.getSelection().removeAllRanges();
+            } else if (document.selection){
+                document.selection.empty();
+            }
+
             if (game.ySlider.value < game.ySliderMin){
                 game.ySlider.value = game.ySliderMin
             }else if (game.ySlider.value > game.ySliderMax) {
