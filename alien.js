@@ -41,7 +41,7 @@ export default class Alien{
         this.xtarget = this.table.center - Math.floor(this.width/2);
         this.ytarget = this.table.y - (this.height - this.margin);
 
-        this.speed = Math.floor(game.GAME_WIDTH*0.083);
+        this.speed = Math.floor(game.GAME_WIDTH*0.11);
 
         this.animationChange1 = this.speed;
         this.animationChange2 = this.speed*2;
@@ -59,7 +59,7 @@ export default class Alien{
         this.complainText = "What is taking so long?";
         this.textSize = Math.floor(this.game.GAME_WIDTH * 0.02);
         this.complain = false;
-        this.leaveTime = 1000;
+        this.leaveTime = 750;
         this.leaveTimer = 0;
         this.waitingPenality = 1;
 

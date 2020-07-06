@@ -171,33 +171,40 @@ export default class Game{
 
         //// indexed by cycle. once in a cycle search for array within array of arrays
         this.c1Combinations = [[[0, 0]], [[1, 1]],[[0, 0]], [[1, 1]], [[0, 0, 1, 1]]];
-        this.c2Combinations = [[[0, 0]], [[1, 1]], [[0, 0, 1, 1]]];
-        this.c3Combinations = [[[0, 0]], [[1, 1]], [[0, 0, 1, 1]]];
-        this.c4Combinations = [[[0, 0], [0, 1]], [[1, 1]], [[0, 1, 1, 1], [0, 0, 0, 1]]];
-        this.c5Combinations = [[[0, 0]], [[1, 1], [1, 0]], [[0, 0, 1, 0], [1, 0, 1, 1]]];
+        this.c2Combinations = [[[0, 1]], [[1, 0]], [[0, 1, 1, 0]]];
+        this.c3Combinations = [[[0, 0], [0, 1]], [[1, 1],  [1, 0]], [[0, 1, 1, 1], [0, 0, 1, 0]]];
+        //this.c3Combinations = [[[0, 0]], [[1, 1], [1, 0]], [[0, 0, 1, 0]]];
+        //this.c2Combinations = [[[0, 0]], [[1, 1]],[[0, 0]], [[1, 1]], [[0, 0, 1, 1]]];
+        this.c4Combinations = [[[0,0], [1,1], [0,0,1,1], [0,1,1,0], [0,0,1,0], [0,1,1,1], [0,0,0,1], [1,0,1,1]]];
+        //
+        // this.c4Combinations = [[[0, 0], [0, 1]], [[1, 1]], [[0, 1, 1, 1]]];
+        // this.c5Combinations = [[[0, 0]], [[1, 1], [1, 0]], [[0, 0, 1, 0], [1, 0, 1, 1]]];
 
 
         this.imagesMasterList = ["0,0", "0,1", "1,0", "1,1", "0,0,1,1",
          "0,1,1,0", "0,0,1,0", "0,1,1,1", "0,0,0,1", "1,0,1,1"]
 
 
-        this.compStructures = ["additive","additive","additive","additive","additive",]
+        this.compStructures = ["additive","additive","additive","additive","additive"]
 
         this.allAlienCombinations = [this.c1Combinations, this.c2Combinations,
-             this.c3Combinations, this.c4Combinations, this.c5Combinations];
+             this.c3Combinations, this.c4Combinations];
+        // this.allAlienCombinations = [this.c1Combinations, this.c2Combinations,
+        //      this.c3Combinations, this.c4Combinations, this.c5Combinations];
 
-        //// counterbalance c2 and c3 cycles:
-        // this.allAlienCombinations = this.counterBalance(this.allAlienCombinations, 1, 2);
 
 
 
         this.c1Bonus = [[0, 0], [1, 1], [0, 0, 1, 1]];
-        this.c2Bonus = [[0, 0], [1, 1], [0, 0, 1, 1]];
-        this.c3Bonus = [[0, 0], [1, 1], [0, 0, 1, 1]];
-        this.c4Bonus = [[0, 0], [0, 1], [0, 1, 1, 1]];
-        this.c5Bonus = [[1, 0], [1, 1], [0, 0, 1, 0]];
+        this.c2Bonus = [[0, 1], [1, 0], [0, 1, 1, 0]];
+        this.c3Bonus = [[0, 1], [1, 1], [0, 1, 1, 1]];
+        //this.c3Bonus = [[0, 0], [1, 0], [0, 0, 1, 0]];
 
-        this.allBonusCombinations = [this.c1Bonus, this.c2Bonus, this.c3Bonus, this.c4Bonus, this.c5Bonus]
+        this.c4Bonus = [[0, 0, 1, 1], [0, 0, 1, 0], [0, 1, 1, 1]]; // fix this
+        //this.c5Bonus = [[1, 0], [1, 1], [0, 0, 1, 0]];
+
+        this.allBonusCombinations = [this.c1Bonus, this.c2Bonus, this.c3Bonus, this.c4Bonus]
+        //this.allBonusCombinations = [this.c1Bonus, this.c2Bonus, this.c3Bonus, this.c4Bonus, this.c5Bonus]
 
         this.imagesMasterList = ["0,0", "0,1", "1,0", "1,1", "0,0,1,1",
          "0,1,1,0", "0,0,1,0", "0,1,1,1", "0,0,0,1", "1,0,1,1"]
@@ -247,8 +254,9 @@ export default class Game{
             }
         }
 
-        this.trialsInCycle = [100, 75, 75, 90, 90];
-        this.numSimultaneousAliens = 3;
+        // this.trialsInCycle = [5, 5, 3, 90, 90];
+        this.numSimultaneousAliens = 1;
+        this.trialsInCycle = [100, 60, 60, 80];
 
         this.symbolTrialsPerCycle = []
 
@@ -294,15 +302,16 @@ export default class Game{
 
         // parameters for linear function
         this.linearParamsCycle1 = [0, 1.1] // intercept and beta coefficient
-        this.linearParamsCycle2 = [0, 1.3]
-        this.linearParamsCycle3 = [0, 0.9]
-        this.linearParamsCycle4 = [0, 1.2]
+        this.linearParamsCycle2 = [0, 0.8]
+        this.linearParamsCycle3 = [0, 1.2]
+        this.linearParamsCycle4 = [0, 1.3]
         this.linearParamsCycle5 = [0, 1.1]
 
 
-        this.periodicParamsCycle1 = [6, 10, 3, 1.4]; // 0: intercept, 1: beta, 2: shift, 3: cycle length
-        this.periodicParamsCycle2 = [5, 5, 0, 0.5];
-        this.periodicParamsCycle3 = [18, 11, 4, 2];
+        //this.periodicParamsCycle1 = [6, 10, 3, 1.4]; // 0: intercept, 1: beta, 2: shift, 3: cycle length
+        this.periodicParamsCycle1 = [5, 5, 0, 0.5];
+        this.periodicParamsCycle2 = [5, 5, 3, 0.5]
+        //this.periodicParamsCycle3 = [18, 11, 4, 2];
 
         // sawtooth parameters
 
@@ -312,11 +321,10 @@ export default class Game{
         this.rbfParams = [0, 10, 2.6, 7]; // -2 intercept, beta = 12, lengthscale = 2.6, optimum = 7
 
         this.allParameters = [
-            [this.linearParamsCycle1, this.periodicParamsCycle2],
-            [this.linearParamsCycle2, this.periodicParamsCycle2],
-            [this.linearParamsCycle3, this.periodicParamsCycle2],
-            [this.linearParamsCycle4, this.periodicParamsCycle2],
-            [this.linearParamsCycle5, this.periodicParamsCycle2]
+            [this.linearParamsCycle1, this.periodicParamsCycle1],
+            [this.linearParamsCycle2, this.periodicParamsCycle1],
+            [this.linearParamsCycle3, this.periodicParamsCycle1],
+            [this.linearParamsCycle4, this.periodicParamsCycle1],
         ];
 
 
@@ -341,7 +349,7 @@ export default class Game{
         this.rfCycle5 = [linear, periodic];
 
 
-        this.allRewardFunctions = [this.rfCycle1, this.rfCycle2, this.rfCycle3, this.rfCycle4, this.rfCycle5];
+        this.allRewardFunctions = [this.rfCycle1, this.rfCycle2, this.rfCycle3, this.rfCycle4];
 
         // Pre load images with loadImages method.
         this.loadImages();
@@ -498,7 +506,7 @@ export default class Game{
 
     getRandomRewardRange(){
         this.randomIntercept = getRandomInt(10, 50);
-        this.randomBeta = getRandomInt(1, 5);
+        this.randomBeta = getRandomInt(2, 5);
         return [this.randomIntercept, this.randomBeta];
     }
 
@@ -599,7 +607,7 @@ export default class Game{
         // create tables and first 3 aliens
         this.tableList = [];
         this.tableIndices = [];
-        this.numTables = 3;
+        this.numTables = 1;
         this.tableSlot = this.GAME_WIDTH/this.numTables
         for (let i = 0; i < this.numTables; i++) {
             this.tableList[i] = new Table(this, i+1, this.tableImage, this.tableSlot);
@@ -704,6 +712,8 @@ export default class Game{
             this.samplingIndex += 1;
         }
 
+        console.log(this.symbolTrialsPerCycle)
+
         return [this.alienFeatures, this.alienImage];
 
 
@@ -802,8 +812,7 @@ export default class Game{
 
     newTrial() {
         // Creates a new trial with a new Alien whose features are pseudo-randomly
-        // generated. It also pseudorandomly decides whether or not the trial
-        // is going to be special, and if it is, what the new range for x,y values will be
+        // generated.
 
         if ((this.totalTrials - this.currentTrial) > (this.numSimultaneousAliens - 1)){
             this.availableTables = this.getAvailableTables();
@@ -860,7 +869,6 @@ export default class Game{
     }
 
     newBonusTrial(){
-        this.bonusFeaturesList = this.allBonusCombinations[this.currentCycle];
 
         if (this.currentTrial < this.bonusFeaturesList.length){
             this.bonusCombIdx = this.currentTrial;
@@ -894,7 +902,8 @@ export default class Game{
         this.currentTrial = 0;
         this.totalTrials = 3;
 
-
+        this.bonusFeaturesList = this.allBonusCombinations[this.currentCycle];
+        this.bonusFeaturesList = shuffle(this.bonusFeaturesList);
 
 
         this.bonusXRange = [0, 15];

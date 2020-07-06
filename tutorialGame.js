@@ -180,7 +180,7 @@ export default class TutorialGame{
         // for (let i = 0; i < 3; i++) {
         //     this.tableList[i] = new Table(this, i+1, this.tableImage);
         // }
-        this.numTables = 3;
+        this.numTables = 1;
         this.tableSlot = this.GAME_WIDTH/this.numTables
         this.tableList = [];
         for (let i = 0; i < this.numTables; i++) {
@@ -193,7 +193,7 @@ export default class TutorialGame{
         this.alienFeatures = [[0, 0], [1, 1], [0, 0]]
         this.transform = [0, 1]
         this.inputDims = [0, 1]
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < this.numTables; i++) {
             this.features = this.alienFeatures[i];
             this.standing = this.allAlienImgs[0][i]
             this.currentRF = undefined//this.defineRewardFunction(this.features[0]);
@@ -215,6 +215,36 @@ export default class TutorialGame{
 
 
     }
+
+    newTrial() {
+        // Creates a new trial with a new Alien whose features are pseudo-randomly
+        // generated.
+        this.features = this.alienFeatures[0];
+        this.standing = this.allAlienImgs[0][0]
+        this.currentRF = undefined//this.defineRewardFunction(this.features[0]);
+
+
+        this.alien = new Alien(this, this.features, this.standing, this.allAlienImgs[1],
+             this.tableList[0], this.currentRF, this.currentRF, undefined, this.transform,
+            this.inputDims);
+        this.alienList.push(this.alien);
+
+        //this.availableTables = this.getAvailableTables();
+        //this.currentTableIdx = getRandomInt(0, this.availableTables.length - 1)
+        // this.currentTable = this.tableList[0];//this.availableTables[this.currentTableIdx]
+        // this.newAlienFeatures = [0, 0]
+        // this.currentRF = this.defineRewardFunction(this.newAlienFeatures[0]); // assign reward functions and parameters
+        // // this.newAlien = new Alien(this, this.newAlienFeatures[0],
+        // //     this.newAlienFeatures[1], this.currentAlienImgs[1], this.player.currentTarget, this.currentRF[0],
+        // //     this.currentRF[1], this.currentCompStructure, this.currentRewardRange, this.colorInputDims);
+        // this.newAlien = new Alien(this, this.newAlienFeatures[0],
+        //     this.newAlienFeatures[1], this.currentAlienImgs[1], this.currentTable, this.currentRF[0],
+        //     this.currentRF[1], this.currentCompStructure, this.currentRewardRange, this.colorInputDims);
+        // this.alienList.push(this.newAlien); // append to alienList
+
+
+    }
+
     changeSliderParams(xRange, yRange){
 
 

@@ -26,7 +26,7 @@ export function periodic(x, parameters) {
     let shift = parameters[2];
     let periodicity = parameters[3];
 
-    return intercept + (beta * (Math.sin(x * (periodicity * Math.PI))));
+    return intercept + (beta * (Math.sin((x+shift) * (periodicity * Math.PI))));
 }
 
 export function sawtooth(x, parameters) {

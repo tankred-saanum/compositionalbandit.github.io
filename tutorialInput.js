@@ -5,8 +5,8 @@ export default class TutorialInputHandler{
 
         this.game = game
         this.tutorialStages = {
-            MOVE: true,
-            SLIDERS: false,
+            MOVE: false,
+            SLIDERS: true,
             SERVE: false,
             SERVEALL: false
         }
@@ -19,10 +19,10 @@ export default class TutorialInputHandler{
         this.continueDiv = document.getElementById("continueDiv");
         this.continueButton = document.getElementById("nextStage");
 
-        this.nextStage(this.initialInfo, this.moveInfo)
+        this.nextStage(this.initialInfo, this.sliderInstructions)
         game.canvas.focus()
 
-        this.currentDivIdx = 0;
+        this.currentDivIdx = 1;
         //this.stageList = [this.tutorialStages.MOVE, this.tutorialStages.SLIDERS, this.tutorialStages.SERVE, this.tutorialStages.SERVEALL]
         this.divList = [this.moveInfo, this.sliderInstructions, this.servingInfo, this.serveAllInfo]
 
@@ -87,8 +87,10 @@ export default class TutorialInputHandler{
                     game.lastAlienServed = true;
                 // } else if(game.currentGameState !== game.GAMESTATES.BONUSROUND) {
                 //     game.newTrial();
-                    }
+            } else {
+                game.newTrial();
                 }
+            }
 
             });
 
