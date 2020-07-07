@@ -80,11 +80,11 @@ let htmlElems = [fullscreenBtn, startBtn];
 let finishTutorialDiv = document.getElementById("tutorialFinishedPage")
 let tutorialPage = 2;
 let consentCheck1 = document.getElementById("consent_check1");
-let consentCheck2 = document.getElementById("consent_check2");
+// let consentCheck2 = document.getElementById("consent_check2");
 let demographicsButton = document.getElementById("demographicsButton")
 
 consentButton.addEventListener("click", event =>{
-    if(consentCheck1.checked && consentCheck2.checked){
+    if(consentCheck1.checked){
         nextPage(currentPage);
     } else {
         alert("You need to consent to the conditions to proceed.");

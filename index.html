@@ -22,17 +22,17 @@
     <!--  -->
 
     <div class ="informedConsent" id = "page1">
-        <div class="mdl-card" style="width: 100%; text-align: center">
+        <div class="mdl-card">
             <div class="mdl-card__media">
             <img src="tutorial_imgs/uclBannerRed.jpg" style="position: relative; width: 100%; right: 0;">
         </div>
         <div class="mdl-card__supporting-text" colour="red">
           <div class="consent_details">
             <ul>
-              <li><strong>Title of Study:</strong> Compositional function learning</li>
+              <li><strong>Title of Study:</strong> Alien Diner</li>
               <li><strong>Department:</strong> UCL Experimental Psychology</li>
-              <li><strong>Name and contact details of the researcher:</strong>Tankred Saanum (tankred.saanum.19@ucl.ac.uk)</li>
-              <li><strong>Name and contact details of the principal researcher:</strong> Maarten Speekenbrink (m.speekenbrink@ucl.ac.uk)</li>
+              <li><strong>Name and contact details of the researcher: </strong>Tankred Saanum (tankred.saanum.19@ucl.ac.uk)</li>
+              <li><strong>Name and contact details of the principal researcher: </strong> Maarten Speekenbrink (m.speekenbrink@ucl.ac.uk)</li>
               <li>This study has been approved by UCL Experimental Psychology Ethics Chair [Project ID: EP/2014/005]</li>
             </ul>
           </div>
@@ -47,28 +47,32 @@
 
             <h4>What is the project’s purpose?</h4>
             <p class ='consentpage'>
-              This experiment investigates decision-making and learning.
+              This experiment investigates learning and decision making.
             </p>
 
             <h4>Do I have to take part?</h4>
             <p class ='consentpage'>
               Your participation in this study is entirely voluntary. You can withdraw at any time without giving a reason.
-              <font color="#E5581"> If you decide to withdraw, you will not receive any payment for your participation.</font>
+              <strong>If you decide to withdraw, you will not receive any payment for your participation.</strong>
             </p>
 
             <h4> You are eligible for this study if:</h4>
 
-            <li>You are at least 18 years old.</li>
-            <li>You do not have any colour vision deficiency.</li>
+            <ul>
+              <li>You are at least 18 years old.</li>
+              <li>You do not have any colour vision deficiency.</li>
+            </ul>
 
             <h4>What will happen to me if I take part?</h4>
             <p class ='consentpage'>
                 In this study, you will play a game where you serve food to aliens.
-                You will repeatedly choose between different combinations of two types of ingredients which you will serve to your alien customers.
+                You will repeatedly decide how to combine two ingredients in a dish you will serve to your alien customers.
                 Your customers will give you money for the food you serve them.
-                The amount of money they give will depend on how much they liked the food you served them.
-                <b>Full instructions will be given in the tutorial at the start of the study.</b>
-                After having provided your consent, having read the instructions and completed a tutorial, you will be able to participate in the experiment.
+                The amount of money they give will depend on how much they liked the food you served them. Different aliens
+                may have different preferences and it is your task to learn what the aliens like in order to maximise your
+                earnings.
+                <!-- <b>Full instructions will be given in the tutorial at the start of the study.</b>
+                After having provided your consent, having read the instructions and completed a tutorial, you will be able to participate in the experiment. -->
             </p>
 
 
@@ -131,13 +135,12 @@
           </div>
           <div class="consent_informed_consent">
             <p class ='consentpage'>
-            <font color="#E5581">
               If you have any questions concerning the research, please contact the researchers before proceeding.
               We advise you to make a copy of this information and the consent form below to keep and refer to at any time.
             </p>
             <p class ='consentpage'>
-              <strong><u>I confirm that I understand that by ticking the boxes below I am consenting to taking part in the study as detailled below.
-                I understand that by not giving consent for any one element that I am ineligible to participate in the study.
+              <strong><u>By ticking the box below I consent to all of the following:
+                                <!-- I understand that by not giving consent for any one element that I am ineligible to participate in the study. -->
               </u></strong>
             </font>
             </p>
@@ -224,14 +227,17 @@
             </p>
             <br>
             <label><input type="checkbox" id="consent_check1" />
-            <b>I confirm that I have read and understood the information about the study. I have had an opportunity
+            <b>I confirm that I consent to all of the points above and my voluntary participation in this study.
+              <!-- have read and understood the information about the study. I have had an opportunity
              to consider the information and what will be expected of me. I have also had the opportunity to ask
-              questions which have been answered to my satisfaction.</b>
+              questions which have been answered to my satisfaction. -->
+            </b>
           </label>
-          <br><br>
+          <!-- <br><br>
           <label><input type="checkbox" id="consent_check2" />
           <b>I voluntarily agree to take part in this study.</b>
             </label>
+          -->
             <br><br>
             <button id="consentButton" class="consentButton">Continue</button>
             <br><br>
@@ -243,11 +249,13 @@
     <div class = "demographicsDiv" id = "page2" style="display:none">
         <h1>Please select you gender:</h1>
             <input type="radio" id="male"class="genderButton" name="gender" value="male">
-            <label for="male">Male</label><br>
+            <label for="male">Male</label><br />
             <input type="radio" id="female"class="genderButton" name="gender" value="female">
-            <label for="female">Female</label><br>
+            <label for="female">Female</label><br />
             <input type="radio" id="other" class="genderButton" name="gender" value="other">
-            <label for="other">Other</label>
+            <label for="other">Other</label><br />
+            <input type="radio" id="prefernot" class="genderButton" name="gender" value="prefernot">
+            <label for="prefernot">Prefer not to say</label>
 
 
         <h1>What is your age?</h1>
@@ -302,14 +310,10 @@
     		     <p><b>Overview:</b></p>
     			 <ul style="line-height:1.8">
     			    <li>In this study, you will play a game where you serve food to aliens. </li>
-                    <li>You will repeatedly choose between different combinations of two types of ingredients which you will serve to your alien customers. </li>
-                    <li>Your customers will give you money for the food you serve them. </li>
-                    <li>The amount of money they give will depend on how much they liked the food you served them. </li>
-                    <li>Furthermore, aliens that look the same like the same food. </li>
-    			    <li>Your goal is to earn as much money as possible. You therefore want to serve your customers food they like. </li>
-                    <li>You should therefore try to learn which combinations of ingredients the aliens like.</li>
-
-
+                    <li>You will repeatedly create dishes to serve the aliens by combining amounts of two types of ingredients. </li>
+                    <li>Your customers will give you money for the food you serve them. The amount of money they give will depend on how much they liked the food. </li>
+                    <li>Different aliens have different coloured symbols on their bellies. The aliens use these features to signal their food preferences.</li>
+    			          <li>Your goal is to earn as much money as possible. You therefore want to serve your customers the dishes they like most. You should therefore try to learn which combinations of ingredients the aliens prefer.</li>
     			 </ul>
             <br>
             <button type="button" id="contButton" class = "instructionsButton" >Continue</button>
@@ -321,15 +325,14 @@
                  <ul style="line-height:1.8">
 
                     <li>The aliens have quite particular preferences for the ingredients and will pay you according to how much they
-                    <br> like the food you served them.</li>
-                    <li> Since your customers are from a different planet, their food preferences may seem a bit peculiar: </li>
+                    like the food you served them.</li>
+                    <li> Since your customers are from a different planet, their food preferences may seem a bit peculiar.
                     <!-- <li> For instance, some aliens may really like a particular ingredient, and would want a lot of that ingredient,
                     <br> while other aliens may dislike an ingredient, and want less. </li> -->
-                    <li> For instance, some aliens may only like very specific amounts of a particular ingredient, and other aliens may be
-                        <br>completely indifferent towards certain ingredients. </li>
-                    <li> <b>Crucially</b>, the aliens’ preferences are related to their appearance: Identical aliens have identical
+                     For instance, some aliens may only like very specific amounts of a particular ingredient, and other aliens may be completely indifferent towards certain ingredients. </li>
+                    <li> <b>Crucially</b>, the aliens’ preferences are related to the symbols on their bellies. <!-- ir appearance: Identical aliens have identical
                         <br> preferences and similar aliens have similar preferences. </li>
-                    <li> The features of the aliens will therefore provide a clue about what combination of ingredients they like. </li>
+                    <li> -->These features of the aliens will therefore provide a clue about what combination of ingredients they like. </li>
                  </ul>
             <br>
             <button type="button" id="contButton" class = "instructionsButton" >Continue</button>
@@ -339,15 +342,22 @@
             <br>
                  <p><b>Overview:</b></p>
                  <ul style="line-height:1.8">
-                     <li>In each round you have two types of ingredients you can use to make food. Your task is to decide how much of each ingredient
-                                     <br> you want to use when preparing the food.</li>
-                     <li> For both ingredients, you can choose to use between <b> 0 and 10 </b> units of that ingredient. </li>
-                     <li> How much your customers like your food depends on the <b>amounts </b>of each ingredient you use. </li>
-                     <li>Each ingredient you can choose from is shown on the screen with a slider.</li>
-                     <li>You can change how much of an ingredient you want to use by changing the value of the slider. </li>
-                     <li>To serve the food, you press the "Serve food" button. You will then give whatever amount of ingredients you had selected with the sliders. </li>
-                     <li>When you have made a choice, the amount of money you receive will appear on the screen.</li>
-                     <li> At the end of each round there is a bonus round. Here you will be able to choose between<b> 0 and 15 </b> units of the ingredient at hand. </li>
+                     <li>In each round you have two types of ingredients you can use in your dishes. Your task is to decide how much of each ingredient you want to use when preparing a dish.</li>
+                     <li>Each ingredient you can choose from is shown on the screen with a slider. For both ingredients, you can choose to use between <b> 0 and 10 </b> units of that ingredient by changing the value of the slider. </li>
+                     <figure>
+                         <img src="tutorial_imgs/sliderDemo.png" alt="Missing"style="width:45%;height:25%;">
+                         <figcaption>Use sliders to select ingredients.</figcaption>
+                     </figure>
+                     <!--<li>Each ingredient you can choose from is shown on the screen with a slider.</li>
+                     <li>You can change how much of an ingredient you want to use by changing the value of the slider. </li> -->
+                     <li>To serve the dish, you press the "Serve food" button. You will then serve the dish with the chosen amount of ingredients you selected with the sliders. </li>
+                     <figure>
+                         <img src="tutorial_imgs/serveDemo.png" alt="Missing"style="width:20%;height:30%;">
+                         <figcaption>Serve the food by clicking the button.</figcaption>
+                     </figure>
+                     <!-- <li> How much your customers like your food depends on the <b>amounts </b>of each ingredient you use. </li> -->
+                     <li>After you serve the dish, you will see the amount of money the alien pays for the food. Remember that how much an alien pays depends on how much they like the food, which in turn depends on on the <b>amounts </b>of each ingredient you use.</li>
+                     <li> At the end of each round there is a bonus round. In the bonus round, you will be able to create dishes with a larger amount (between<b> 0 and 15 </b> units) of each ingredient.</li>
                      <!-- <li> The customers will gather at the tables. To serve them, you need to walk to their table. </li> -->
                      <!-- <li> If a customer finds themselves waiting for food at one of your tables for too long, they will complain. </li> -->
                      <!-- <li> If you continue to ignore a customer after they complain, they will be angry and give you less money. </li> -->
@@ -355,7 +365,7 @@
                  </ul>
             <br>
             <button type="button" id="contButton" class = "instructionsButton" >Continue</button>
-            <br> <br>
+            <!-- <br> <br>
             <div id="imgDiv">
                 <figure>
                     <img src="tutorial_imgs/sliderDemo.png" alt="Missing"style="width:45%;height:25%;">
@@ -370,10 +380,11 @@
                 <!-- <figure>
                 <img src="tutorial_imgs/tableDemo.png" alt="Missing"style="width:20%;height:30%;">
                     <figcaption>You will serve the alien at the table you have walked to.</figcaption>
-                </figure> -->
+                </figure>
 
             </div>
             <br> <br>
+          -->
         </div>
 
 
@@ -383,13 +394,14 @@
                  <ul style="line-height:1.8">
 
                     <li>The game has 5 rounds. In each round you will serve a varying amount of alien customers. </li>
-                    <li> The currency the customers pay with will change from round to round. </li>
-                    <li> You will continuously get feedback about how much you have earned in each round. </li>
-                    <li> You will also be able to see how many aliens that you still need to serve for the current round. </li>
+                    <li> The currency the customers pay with will change from round to round and you can see how many aliens you still need to serve in the current round.</li>
+                    <li> You need to serve all aliens to progress to the next round, and you need to complete all rounds to finish the experiment. </li>
+                    <li> You will continuously get feedback about how much you have earned in each round.
+                    <!-- <li> You will also be able to </li>
                     <!-- <li> If a customer finds themselves waiting for food at one of your tables for too long, they will complain </li>
                     <li> If you continue to ignore a customer after they complain, they will be angry and give you less money </li> -->
-                    <li> You need to serve all aliens to progress to the next round, and you need to complete all rounds to finish the experiment. </li>
-                    <li> You will be told at the end of each round how much you earned. </li>
+                    <!--  -->
+                    You will be told at the end of each round how much you earned. </li>
                  </ul>
             <br>
             <button type="button" id="contButton" class = "instructionsButton" >Continue</button>
