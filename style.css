@@ -23,6 +23,9 @@
   height: 100%;
   overflow: auto;
 
+  width: 50%;
+  min-width: 600px; /* Will be AT LEAST 20em wide */
+  margin: 0 auto;
 
   font-family: arial;
   font-size: 15px;
@@ -42,9 +45,14 @@
     height: 100%;
     overflow: auto;
 
+    width: 50%;
+    min-width: 600px; /* Will be AT LEAST 20em wide */
+    margin: 0 auto;
 
     font-family: arial;
     font-size: 15px;
+
+    // text-align: left;
 }
 .demographicsDiv{
     padding-right: 40px;
@@ -55,6 +63,10 @@
     /* position: absolute; */
     height: 100%;
     overflow: auto;
+
+    width: 50%;
+    min-width: 600px; /* Will be AT LEAST 20em wide */
+    margin: 0 auto;
 
 
     font-family: arial;
