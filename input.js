@@ -32,8 +32,8 @@ export default class InputHandler {
 
         game.submitButton.addEventListener('click', event => {
             if(game.player.currentTarget.currentCustomer != undefined){
-                if (game.player.canSelect && game.player.currentTarget.currentCustomer.readyToServe){
-
+                if (game.player.canSelect && game.player.currentTarget.currentCustomer.readyToServe && game.hasMovedSlider){
+                    game.hasMovedSlider = false;
                     // get reward from alien
                     game.player.currentTarget.currentCustomer.giveReward(game.xSlider.value, game.ySlider.value);
                     // update display
@@ -60,6 +60,9 @@ export default class InputHandler {
                     } else {
                         game.newBonusTrial()
                     }
+                } else if (game.player.canSelect && game.player.currentTarget.currentCustomer.readyToServe && !game.hasMovedSlider) {
+                    game.sliderWarning.show = true;
+
                 }
             }
         });
@@ -79,6 +82,11 @@ export default class InputHandler {
             }
             game.xValueText.change(game.xSlider.value);
             game.xIngredient.update(game.xSlider.value);
+
+            game.hasMovedSlider = true;
+            game.sliderWarning.show = false;
+
+
             this.gradient = ((game.xSlider.value - game.xSlider.min)/(game.xSlider.max - game.xSlider.min));
             this.modifiedRgba = game.xSliderColor1.slice(0, -2);
             this.modifiedRgba += `${this.gradient})`;
@@ -113,6 +121,10 @@ export default class InputHandler {
                 game.ySlider.value = game.ySliderMax
             }
             game.yValueText.change(game.ySlider.value);
+
+            game.hasMovedSlider = true;
+            game.sliderWarning.show = false;
+
             this.gradient = ((game.ySlider.value - game.ySlider.min)/(game.ySlider.max - game.ySlider.min))
             this.modifiedRgba = game.ySliderColor1.slice(0, -2);
             this.modifiedRgba += `${this.gradient})`;

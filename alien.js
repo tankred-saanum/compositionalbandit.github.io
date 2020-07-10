@@ -241,9 +241,7 @@ export default class Alien{
         this.untransformedReward = this.reward;
         this.reward = this.reward*this.transformBeta;
         this.reward = this.reward + this.transformIntercept;
-        // console.log("untransformed", this.untransformedReward)
-        // console.log("transformed", this.reward)
-        // console.log("params", this.transformIntercept, this.transformBeta)
+
 
 
         this.hasBeenServed = true;

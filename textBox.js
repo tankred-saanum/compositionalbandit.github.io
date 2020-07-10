@@ -21,6 +21,7 @@ export default class TextBox {
         this.color = this.defaultColor;
         this.textHasChanged = false;
         this.hasFaded = false;
+        this.show = true;
 
     }
 
@@ -67,13 +68,16 @@ export default class TextBox {
     }
 
     draw(ctx) {
-        ctx.font = `bold ${this.size}px sans-serif`;
-        this.color = `rgba(${this.rgb}, ${this.alpha})`;
-        ctx.textAlign = this.align;
-        ctx.fillStyle = this.color;
-        ctx.fillText(this.text1, this.x, this.y);
-        ctx.strokeStyle = `rgba(0, 0, 0, ${this.alpha})`;
-        ctx.strokeText(this.text1, this.x, this.y);
+        if (this.show){
+            ctx.font = `bold ${this.size}px sans-serif`;
+            this.color = `rgba(${this.rgb}, ${this.alpha})`;
+            ctx.textAlign = this.align;
+            ctx.fillStyle = this.color;
+            ctx.fillText(this.text1, this.x, this.y);
+            ctx.strokeStyle = `rgba(0, 0, 0, ${this.alpha})`;
+            ctx.strokeText(this.text1, this.x, this.y);
+        }
+
 
     }
 
