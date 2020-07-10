@@ -1,5 +1,6 @@
 //import Game from './game.js'
-import Game from './gamev2.js' // use this to try the second version of the game, employing more regimented training
+//import Game from './gamev2.js'
+import Game from './gamev3.js' // use v3
 import TutorialGame from './tutorialGame.js'
 
 ////////////////////////////////////////////
