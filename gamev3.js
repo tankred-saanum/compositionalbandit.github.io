@@ -458,13 +458,13 @@ export default class Game{
         for (let i = 0; i < this.totalCycles; i++){
             this.xIngredientImgs = []
             this.yIngredientImgs = []
-            this.currentFolder = `assets_v3/ingredients/${this.xIngredientColor}`;
+            this.currentFolder = `assets_v3/${this.xIngredientColor}`;
             this.currentIngredientIdx = this.ingredientArray[i];
             for (let j = 0; j <= 15; j++){
                 this.xIngredientImgs[j] = new Image();
                 this.xIngredientImgs[j].src = `${this.currentFolder}/${this.currentIngredientIdx}/${j}.png`
             }
-            this.currentFolder = `assets_v3/ingredients/${this.yIngredientColor}`;
+            this.currentFolder = `assets_v3/${this.yIngredientColor}`;
             this.currentIngredientIdx = this.ingredientArray[i+this.totalCycles];
             for (let k = 0; k <= 15; k++){
                 this.yIngredientImgs[k] = new Image();
