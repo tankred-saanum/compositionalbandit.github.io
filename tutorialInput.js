@@ -68,8 +68,8 @@ export default class TutorialInputHandler{
                 // get reward from alien
                 game.player.currentTarget.currentCustomer.giveRandomReward();
                 // update display
-                game.totalRewardText.change(`Total $: ${game.totalReward}`);
-                game.rewardText.change(game.reward);
+                game.totalRewardText.change(`Total $: X`);
+                game.rewardText.change("X");
                 // save data
                 //game.saveTrialData(game.player.currentTarget.currentCustomer, parseInt(game.xSlider.value), parseInt(game.ySlider.value));
 

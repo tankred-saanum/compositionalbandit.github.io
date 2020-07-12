@@ -170,9 +170,9 @@ export default class Alien{
 
     giveRandomReward(){
         this.hasBeenServed = true;
-        this.randReward = getRandomInt(0, 20);
-        this.game.totalReward += this.randReward;
-        this.game.reward = this.randReward;
+        //this.randReward = getRandomInt(0, 20);
+        //this.game.totalReward += this.randReward;
+        //this.game.reward = this.randReward;
     }
 
     giveReward(x, y) {
