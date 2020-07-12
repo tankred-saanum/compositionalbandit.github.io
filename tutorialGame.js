@@ -74,11 +74,15 @@ export default class TutorialGame{
         this.xSliderRect.y -= this.canvasY
         this.ySliderRect.y -= this.canvasY
 
+        this.xSliderColor1 = "rgba(0, 0, 0, 1)";
+        this.xSliderColor2 = "rgba(255, 255, 255, 1)";
+        this.ySliderColor1 = "rgba(0, 0, 0, 1)";
+        this.ySliderColor2 = "rgba(255, 255, 255, 1)";
 
-        this.xSliderColor1 = "rgba(255, 41, 41, 1)";
-        this.xSliderColor2 = "rgba(5, 129, 250, 1)";
-        this.ySliderColor1 = "rgba(255, 41, 41, 1)";
-        this.ySliderColor2 = "rgba(5, 129, 250, 1)";
+        // this.xSliderColor1 = "rgba(255, 41, 41, 1)";
+        // this.xSliderColor2 = "rgba(5, 129, 250, 1)";
+        // this.ySliderColor1 = "rgba(255, 41, 41, 1)";
+        // this.ySliderColor2 = "rgba(5, 129, 250, 1)";
         this.xGradient = ((this.xSlider.value - this.xSlider.min)/(this.xSlider.max - this.xSlider.min));
         this.yGradient = ((this.ySlider.value - this.ySlider.min)/(this.ySlider.max - this.ySlider.min));
         this.xSlider.style.opacity = 0.85;

@@ -169,10 +169,16 @@ export default class Game{
         this.sliderWarning.show = false;
 
         ///// Define slider colors/////
-        this.xSliderColor1 = "rgba(255, 41, 41, 1)";
-        this.xSliderColor2 = "rgba(5, 129, 250, 1)";
-        this.ySliderColor1 = "rgba(255, 41, 41, 1)";
-        this.ySliderColor2 = "rgba(5, 129, 250, 1)";
+        this.xSliderColor1 = "rgba(0, 0, 0, 1)";
+        this.xSliderColor2 = "rgba(255, 255, 255, 1)";
+
+        this.ySliderColor1 = "rgba(0, 0, 0, 1)";
+        this.ySliderColor2 = "rgba(255, 255, 255, 1)";
+
+        // this.xSliderColor1 = "rgba(255, 41, 41, 1)";
+        // this.xSliderColor2 = "rgba(5, 129, 250, 1)";
+        // this.ySliderColor1 = "rgba(255, 41, 41, 1)";
+        // this.ySliderColor2 = "rgba(5, 129, 250, 1)";
 
 
         ///////////////////////////////////////

@@ -23,9 +23,6 @@
   height: 100%;
   overflow: auto;
 
-  width: 50%;
-  min-width: 600px; /* Will be AT LEAST 20em wide */
-  margin: 0 auto;
 
   font-family: arial;
   font-size: 15px;
@@ -45,14 +42,9 @@
     height: 100%;
     overflow: auto;
 
-    width: 50%;
-    min-width: 600px; /* Will be AT LEAST 20em wide */
-    margin: 0 auto;
 
     font-family: arial;
     font-size: 15px;
-
-    // text-align: left;
 }
 .demographicsDiv{
     padding-right: 40px;
@@ -63,10 +55,6 @@
     /* position: absolute; */
     height: 100%;
     overflow: auto;
-
-    width: 50%;
-    min-width: 600px; /* Will be AT LEAST 20em wide */
-    margin: 0 auto;
 
 
     font-family: arial;
@@ -86,6 +74,16 @@
     font-family: arial;
     font-size: 15px;
 }
+/* #sliderWarning{
+    font-size: 20px;
+    font-family: Georgia, serif;
+    font-weight: bold;
+    color: rgb(247, 88, 80);
+    margin-top: 1%;
+    position:absolute;
+    z-index: auto;
+
+} */
 /* #imgDiv{
     float: right;
     text-align: right;
@@ -212,7 +210,7 @@
     background-color: rgb(90, 122, 139);
 }
 
-.fullscreenWarning{
+/* .fullscreenWarning{
 
     font-size: 30px;
     font-family: Georgia, serif;
@@ -221,7 +219,7 @@
     color: rgb(247, 88, 80);
     margin-top: 1%;
 
-}
+} */
 
 
 
@@ -259,6 +257,7 @@
     background: white;
     border-radius: 50%;
     cursor: pointer;
+    border: 1px solid #000000;
 
 }
 
@@ -268,6 +267,7 @@
     background: white;
     border-radius: 50%;
     cursor: pointer;
+    border: 1px solid #000000;
 
 }
 
@@ -304,6 +304,7 @@
     background: white;
     border-radius: 50%;
     cursor: pointer;
+    border: 1px solid #000000;
 
 }
 
@@ -313,5 +314,6 @@
     background: white;
     border-radius: 50%;
     cursor: pointer;
+    border: 1px solid #000000;
 
 }
