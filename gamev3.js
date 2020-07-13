@@ -271,7 +271,7 @@ export default class Game{
 
         // this.trialsInCycle = [5, 5, 3, 90, 90];
         this.numSimultaneousAliens = 1;
-        this.trialsInCycle = [5, 3, 3, 8];
+        this.trialsInCycle = [100, 60, 60, 80];
 
         this.symbolTrialsPerCycle = []
 
