@@ -45,8 +45,11 @@ export default class Game{
         // define object containing participant data, later to be saved as json
 
         this.generalData = {
-            age:undefined,
-            gender:undefined,
+            age:"undefined",
+            gender:"undefined",
+            date:"",
+            startTime:"",
+            endTime:"",
             betweenRoundTime: [],
             rewardTransformations: [],
 
@@ -55,9 +58,7 @@ export default class Game{
             cycle: [],
             trials: [],
             moves: [],
-            servedTable: [],
             alienFeatures: [],
-            alternativeAliens: [],
             waitingTimes: [],
             xValue: [],
             yValue: [],
@@ -270,7 +271,7 @@ export default class Game{
 
         // this.trialsInCycle = [5, 5, 3, 90, 90];
         this.numSimultaneousAliens = 1;
-        this.trialsInCycle = [100, 60, 60, 80];
+        this.trialsInCycle = [5, 3, 3, 8];
 
         this.symbolTrialsPerCycle = []
 
@@ -347,6 +348,12 @@ export default class Game{
         this.rfIndex2 = 1 - this.rfIndex1;  // defines which rf the triangle applies to
         this.generalData.s1RF = this.rfIndex1;
         this.generalData.s2RF = this.rfIndex2;
+        this.today = new Date();
+        this.date = this.today.getFullYear() + '-' + (this.today.getMonth()+1) + '-' + this.today.getDate();
+        this.startTime = this.today.getTime()
+        this.generalData.date = this.date;
+        this.generalData.startTime = this.startTime
+
         // this.c1InputDim = getRandomInt(0, 1);  // defines which dimension red applies to
         // this.c2InputDim = 1 - this.c1InputDim; // defines which dimension blue applies to
 
@@ -879,6 +886,7 @@ export default class Game{
     bonusRound(){
 
         this.bonusTrial = true;
+        this.hasMovedSlider = false;
 
         this.lastAlienServed = false;
         this.currentTrial = 0;
@@ -924,28 +932,28 @@ export default class Game{
         this.participantData.trials.push(this.currentTrial);
         this.participantData.moves.push(this.playerMoves);
         this.playerMoves = [];
-        this.participantData.servedTable.push(this.player.targetIndex);
+        //this.participantData.servedTable.push(this.player.targetIndex);
         this.participantData.alienFeatures.push(currentAlien.features);
 
-        if(this.numSimultaneousAliens == this.tableList.length){
-            if (this.tableList.length == 3){
-                if (this.player.targetIndex == 1){
-                    this.participantData.alternativeAliens.push([this.tableList[0].currentCustomer.features, this.tableList[2].currentCustomer.features])
-                } else if (this.player.targetIndex == 0) {
-                    this.participantData.alternativeAliens.push([this.tableList[1].currentCustomer.features, this.tableList[2].currentCustomer.features])
-                } else {
-                    this.participantData.alternativeAliens.push([this.tableList[0].currentCustomer.features, this.tableList[1].currentCustomer.features])
-                }
-            }
-
-
-            this.waitingTimeList = [];
-            for (let table in this.tableList){
-                this.waitingTime = this.tableList[table].currentCustomer.complainCounter;
-                this.waitingTimeList.push(this.waitingTime);
-            }
-            this.participantData.waitingTimes.push(this.waitingTimeList);
-        }
+        // if(this.numSimultaneousAliens == this.tableList.length){
+        //     if (this.tableList.length == 3){
+        //         if (this.player.targetIndex == 1){
+        //             this.participantData.alternativeAliens.push([this.tableList[0].currentCustomer.features, this.tableList[2].currentCustomer.features])
+        //         } else if (this.player.targetIndex == 0) {
+        //             this.participantData.alternativeAliens.push([this.tableList[1].currentCustomer.features, this.tableList[2].currentCustomer.features])
+        //         } else {
+        //             this.participantData.alternativeAliens.push([this.tableList[0].currentCustomer.features, this.tableList[1].currentCustomer.features])
+        //         }
+        //     }
+        //
+        //
+        //     this.waitingTimeList = [];
+        //     for (let table in this.tableList){
+        //         this.waitingTime = this.tableList[table].currentCustomer.complainCounter;
+        //         this.waitingTimeList.push(this.waitingTime);
+        //     }
+        //     this.participantData.waitingTimes.push(this.waitingTimeList);
+        // }
 
 
         this.participantData.xValue.push(xVal);
@@ -1012,7 +1020,10 @@ export default class Game{
 
             if (this.lastAlienServed && this.rewardText.hasFaded){
                 if (this.currentCycle == (this.totalCycles - 1)){
-                    this.saveToDatabase()
+                    this.today = new Date();
+                    this.endTime = this.today.getTime();
+                    this.generalData.endTime = this.endTime;
+                    this.saveToDatabase();
                     for (let elem in this.htmlList){
                         this.htmlList[elem].style.display = "none";
                     }

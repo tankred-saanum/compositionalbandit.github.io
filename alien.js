@@ -121,6 +121,7 @@ export default class Alien{
                 this.complain = true;
                 this.readyToServe = false;
                 if (this.leaveTimer > this.leaveTime){
+                    this.game.hasMovedSlider = false;
                     this.game.changeSliderParams(this.game.xRange, this.game.yRange)
                     this.xtarget = this.game.GAME_WIDTH + (2*this.width);
                     this.game.alienList.push(this.game.alienList.splice(this.game.alienList.indexOf(this), 1)[0]);

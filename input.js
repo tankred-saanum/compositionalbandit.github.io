@@ -33,7 +33,7 @@ export default class InputHandler {
         game.submitButton.addEventListener('click', event => {
             if(game.player.currentTarget.currentCustomer != undefined){
                 if (game.player.canSelect && game.player.currentTarget.currentCustomer.readyToServe && game.hasMovedSlider){
-                    game.hasMovedSlider = false;
+                    
                     // get reward from alien
                     game.player.currentTarget.currentCustomer.giveReward(game.xSlider.value, game.ySlider.value);
                     // update display
