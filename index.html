@@ -15,11 +15,6 @@
 
     <button type="button" id="submitButton" class = "submitButton" style = "display:none">Serve food</button>
 
-    <!--  -->
-    <!-- remove after debugging -->
-    <!-- <button type="button" id="fullscreenBtn" class = "instructionsButton">Fullscreen</button>
-    <button type="button" id="start" class = "startGameBtn">Start game</button> -->
-    <!--  -->
 
     <div class ="informedConsent" id = "page1">
         <div class="mdl-card">
@@ -266,44 +261,6 @@
     </div>
 
     <div class="instructionsWrapper" id = "instructionsWrapper">
-        <!--First page contains Welcome-->
-        <!-- <div id="page1" style="display:block">
-          <h3>Decision making experiment</h3>
-          <p> This study is part of a research project conducted by Tankred Saanum and Maarten Speekenbrink </p>
-          <p> If you have any questions, please contact: <strong>tankred.saanum.19@ucl.ac.uk</strong></p>
-          <button type="button" id="contButton" class = "instructionsButton" >Continue</button>
-        </div> -->
-
-        <!--First page contains Welcome-->
-        <div id="pagen" style="display:none">
- 	   		<br>
- 		   	<h4><center>Statement of Informed Consent</center></h4>
- 		   	<p><center>Please consider this information carefully before deciding whether to participate in this research.</center></p>
- 		    <p><b>Purpose of the research:</b> To examine the way people make decisions and learn about the relationships between stimuli, actions and rewards. </p>
- 		    <p><b>What you will do in this research:</b> Stimuli (images) will be presented on the computer and you will be asked to choose between different actions after which you may receive feedback to earn monetary reward. You may also be asked to fill out short questionnaires. </p>
- 		    <p><b>Time required: </b> Participation will take up to 30 minutes to complete.</p>
- 		    <p><b>Risks:</b>  Some of the questionnaires contain questions about sensitive topics such as sexual, physical, or emotional abuse, drug use, violent behavior, medical/psychiatric history, etc., and could cause you to feel uncomfortable or upset. If you do not feel comfortable, you can skip questions or stop the questionnaires at any time.</p>
- 		    <p><b>Compensation:</b> You will receive $2 in compensation plus up to $1.50 in bonus for your performance on the task.</p>
- 		    <p><b>Confidentiality:</b>  Your participation in this study will remain confidential. Your MTurk worker IDs will NOT be shared with anyone outside of the research team. However, work you perform on MTurk can be linked to your pub-lic profile page. Thus, to maximize your privacy, you may wish to restrict what information you choose to share in your public profile. Your de-identified data may be shared with other researchers and used in future projects.</p>
- 			<p>In some cases, we may be interested in re-contacting you for additional information or to participate in a follow-up experiment. If we do, your participation is completely optional and you would be compensated appropriately for your time. If you <b>DO NOT</b> wish to be recontacted, please check the box.
- 			</p>
- 			<fieldset>
- 				<fieldset style="float:left;width:400px;margin:5px">
- 			        <input type="radio" name="q1"; onclick="setrecontact(true)" > I am willing to be recontacted in the future. (Default)<br>
- 			        <input type="radio" name="q1"; onclick="setrecontact(false)"> I do not wish to be recontacted.<br>
- 				</fieldset>
- 			</fieldset>
- 			<p><b>Participation and withdrawal: </b>Your participation in this study is completely voluntary and you may refuse to participate or you may choose to withdraw at any time without penalty or loss of benefits to which you are otherwise entitled.</p>
- 			<p><b>How to contact the researchers: </b>If you have questions or concerns about your participation or payment, or want to request a summary of research findings, please contact Sam Gershman, gershman@fas.harvard.edu, (773) 607-9817.</p>
- 			<p><b>Whom to contact about your rights as a participant in this research:</b> For questions, concerns, suggestions, or complaints that have not been or cannot be addressed by the researcher, or to report research-related harm, please contact the Committee on the Use of Human Subjects, Richard A. and Susan F. Smith Campus Center, 1350 Mas-sachusetts Avenue, Suite 935, Cambridge, MA 02138; Email: cuhs@harvard.edu</p>
- 			<p>Please print or save a copy of this form for your records.</p>
- 			<p><b>Agreement:  </b></p>
- 			<div style="margin-left:30px;margin-right:30px"> <p>The nature and purpose of this research have been sufficiently explained and I agree to participate in this study.  I understand that I am free to withdraw at any time without incurring any penalty.</p>
- 			<p>Please consent by clicking the button below to continue. Otherwise, please exit the study at this time. </p>
- 			<button type="button" id="acceptButton" class = "instructionsButton" >Agree</button>
- 			</div>
- 			<br><br>
- 	    </div>
 
         <div id = "page3" style="display:none">
             <br>
@@ -482,7 +439,8 @@
     </div>
     <div id="page10" style="display:none" class="endPage"
 
-    <p>You have finished the experiment. Please click the link to be directed back to prolific.</p>
+            <p>You have finished the experiment. Thank you for your participation. This experiment forms part of a study on compositional
+            reward function learning.</p>
     </div>
 
     <!-- scripts: -->
