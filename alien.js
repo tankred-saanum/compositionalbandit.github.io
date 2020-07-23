@@ -250,6 +250,7 @@ export default class Alien{
         this.game.totalReward += this.reward;
         this.game.reward = this.reward;
         this.game.untransformedReward = this.untransformedReward;
+        this.game.performance += this.untransformedReward;
 
         this.xExploration = true;
         this.yExploration = true;
