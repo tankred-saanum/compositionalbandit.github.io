@@ -73,7 +73,7 @@
 
             <h4>What are the possible benefits of taking part?</h4>
             <p class ='consentpage'>
-              You will be paid X for completing the experiment and in the game and can win up to an additional X bonus reward, depending on your performance.
+              You will be paid £1.92 for completing the experiment and in the game and can win up to an additional £1.22 bonus reward, depending on your performance.
             </p>
 
             <h4>What if something goes wrong?</h4>
@@ -183,7 +183,7 @@
             </p>
             <p class ='consentpage'>
               <li>
-              I understand that I will be paid X for my participation and can earn up to X additionally, depending
+              I understand that I will be paid £1.92 for my participation and can earn up to £1.22 additionally, depending
               on my performance in the game.
           </li>
             </p>
@@ -242,6 +242,9 @@
     </div>
 
     <div class = "demographicsDiv" id = "page2" style="display:none">
+        <h1>What is your Prolific participant ID?</h1>
+            <label for="prolificID">ID: </label>
+            <input type="text" id="prolificID" name="age" size="50"><br><br>
         <h1>Please select you gender:</h1>
             <input type="radio" id="male"class="genderButton" name="gender" value="male">
             <label for="male">Male</label><br />
@@ -315,7 +318,7 @@
                      <!-- <li> How much your customers like your food depends on the <b>amounts </b>of each ingredient you use. </li> -->
                      <li>After you serve the dish, you will see the amount of money the alien pays for the food. Remember that how much an alien pays depends on how much they like the food, which in turn depends on on the <b>amounts </b>of each ingredient you use.</li>
                      <li> At the end of each round there is a bonus round. In the bonus round, you will be able to create dishes with a larger amount (between<b> 0 and 15 </b> units) of each ingredient.</li>
-                     
+
                      <figure>
                          <img src="tutorial_imgs/bonusDemo.png" alt="Missing"style="width:45%;height:25%;">
                          <figcaption>The sliders go from 0 to 15 in the bonus rounds.</figcaption>
@@ -327,26 +330,7 @@
                  </ul>
             <br>
             <button type="button" id="contButton" class = "instructionsButton" >Continue</button>
-            <!-- <br> <br>
-            <div id="imgDiv">
-                <figure>
-                    <img src="tutorial_imgs/sliderDemo.png" alt="Missing"style="width:45%;height:25%;">
-                    <figcaption>Use sliders to select ingredients.</figcaption>
-                </figure>
-                <br>
-                <figure>
-                    <img src="tutorial_imgs/serveDemo.png" alt="Missing"style="width:20%;height:30%;">
-                    <figcaption>Serve the food by clicking the button.</figcaption>
-                </figure>
-                <br>
-                <!-- <figure>
-                <img src="tutorial_imgs/tableDemo.png" alt="Missing"style="width:20%;height:30%;">
-                    <figcaption>You will serve the alien at the table you have walked to.</figcaption>
-                </figure>
 
-            </div>
-            <br> <br>
-          -->
         </div>
 
 
@@ -359,10 +343,7 @@
                     <li> The currency the customers pay with will change from round to round and you can see how many aliens you still need to serve in the current round.</li>
                     <li> You need to serve all aliens to progress to the next round, and you need to complete all rounds to finish the experiment. </li>
                     <li> You will continuously get feedback about how much you have earned in each round.
-                    <!-- <li> You will also be able to </li>
-                    <!-- <li> If a customer finds themselves waiting for food at one of your tables for too long, they will complain </li>
-                    <li> If you continue to ignore a customer after they complain, they will be angry and give you less money </li> -->
-                    <!--  -->
+
                     You will be told at the end of each round how much you earned. </li>
                  </ul>
             <br>
@@ -442,10 +423,17 @@
 
         </div>
     </div>
-    <div id="page10" style="display:none" class="endPage"
+    <div id="page10" style="display:none" class="endPage">
+            <br>
+            <p>You have finished the experiment. Thank you for your participation. </p>
+            <p>Click this link to return to Prolific:</p>
+            <a href= "https://app.prolific.co/submissions/complete?cc=31F413AE"> https://app.prolific.co/submissions/complete?cc=31F413AE</a>
 
-            <p>You have finished the experiment. Thank you for your participation. This experiment forms part of a study on compositional
-            reward function learning.</p>
+
+            <p> This experiment forms part of a study on how humans
+                generalize from experience, learn about and infer compositional structure from data.
+                If you're interested in learning more, feel free to send an email to
+                 tankred.saanum.19@ucl.ac.uk.</p>
     </div>
 
     <!-- scripts: -->

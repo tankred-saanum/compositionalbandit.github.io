@@ -59,6 +59,19 @@ ageField.addEventListener("input", event=>{
 })
 
 
+let id = ""
+let prolificID =document.getElementById("prolificID");
+let idCondition = false;
+prolificID.addEventListener("input", event=>{
+    id = prolificID.value;
+    if(id!=""){
+        idCondition = true;
+    } else {
+        idCondition = false;
+    }
+})
+
+
 
 // Hide HTML elements used in game
 
@@ -92,7 +105,7 @@ consentButton.addEventListener("click", event =>{
     }
 })
 demographicsButton.addEventListener("click", event =>{
-    if(ageCondition && genderCondition){
+    if(ageCondition && genderCondition && idCondition){
         nextPage(currentPage);
     } else {
         if(!isNaN(age) && age!=""){
@@ -106,6 +119,9 @@ demographicsButton.addEventListener("click", event =>{
         }
         if(!genderCondition){
             alert("Please specify your gender.")
+        }
+        if(!idCondition){
+            alert("Please insert your Prolific ID")
         }
     }
 })
@@ -196,6 +212,7 @@ function startTutorial(){
 function startGame(){
     let game  = new Game(ref);
     game.startNewGame();
+    game.generalData.id = id;
     game.generalData.age = age;
     game.generalData.gender = gender
     let lastTime = 0;
@@ -207,7 +224,12 @@ function startGame(){
         lastTime = timestamp;
 
 
-        if (game.currentGameState === game.GAMESTATES.FINISHED){
+        if (game.currentGameState === game.GAMESTATES.EXIT){
+            for (let elem in game.htmlList){
+                game.htmlList[elem].style.display = "none";
+            }
+            game.canvas.style.display = "none";
+
             document.getElementsByClassName("gamePage")[0].style.display = "none";
             document.getElementsByClassName("endPage")[0].style.display = "block";
             // nextPage(currentPage);

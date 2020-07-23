@@ -38,13 +38,15 @@ export default class Game{
             RUNNING: 1,
             BONUSROUND: 2,
             BETWEENCYCLE: 3,
-            FINISHED: 4
+            FINISHED: 4,
+            EXIT: 5
 
         };
 
         // define object containing participant data, later to be saved as json
 
         this.generalData = {
+            id:"",
             age:"undefined",
             gender:"undefined",
             date:"",
@@ -52,6 +54,7 @@ export default class Game{
             endTime:"",
             betweenRoundTime: [],
             rewardTransformations: [],
+            accumulatedBonus: 0
 
         }
         this.participantData = {
@@ -272,6 +275,7 @@ export default class Game{
         // this.trialsInCycle = [5, 5, 3, 90, 90];
         this.numSimultaneousAliens = 1;
         this.trialsInCycle = [100, 60, 60, 80];
+        //this.trialsInCycle = [5,3, 3, 8];
 
         this.symbolTrialsPerCycle = []
 
@@ -301,6 +305,11 @@ export default class Game{
 
 
         //////////////////////////////////////
+        this.avgBonusPay = 0.95; // this is the expected bonus payment
+        this.expectedPerformance = 2605; // this is the average performance
+        this.performance = 0;
+        this.accumulatedPayment = 0;
+        /////////////
 
 
         // Define how many cycles, i.e. the number of consecutive bandit tasks.
@@ -978,6 +987,7 @@ export default class Game{
         // this.ref.push(this.participantData);
         // this.ref.push(this.generalData);
         this.ref.push(this.data)
+
     }
 
     update(dt){
@@ -1020,14 +1030,17 @@ export default class Game{
 
             if (this.lastAlienServed && this.rewardText.hasFaded){
                 if (this.currentCycle == (this.totalCycles - 1)){
+                    // compute bonus here
+                    this.performanceProportion = this.performance/this.expectedPerformance;
+                    this.accumulatedPayment = this.avgBonusPay*this.performanceProportion;
+                    this.accumulatedPayment = this.accumulatedPayment.toFixed(2);
+
                     this.today = new Date();
                     this.endTime = this.today.getTime();
                     this.generalData.endTime = this.endTime;
+                    this.generalData.accumulatedBonus = this.accumulatedPayment;
                     this.saveToDatabase();
-                    for (let elem in this.htmlList){
-                        this.htmlList[elem].style.display = "none";
-                    }
-                    this.canvas.style.display = "none";
+
 
                     this.currentGameState = this.GAMESTATES.FINISHED;
 
@@ -1036,7 +1049,11 @@ export default class Game{
 
 
                 } else {
-                this.currentGameState = this.GAMESTATES.BETWEENCYCLE;
+                    // compute bonus here
+                    this.performanceProportion = this.performance/this.expectedPerformance;
+                    this.accumulatedPayment = this.avgBonusPay*this.performanceProportion;
+                    this.accumulatedPayment = this.accumulatedPayment.toFixed(2);
+                    this.currentGameState = this.GAMESTATES.BETWEENCYCLE;
                 }
             }
 
@@ -1094,11 +1111,11 @@ export default class Game{
             ctx.fillStyle = "white";
             ctx.textAlign = "center";
             ctx.fillText(`You have finished task number ${this.currentCycle + 1}`,
-             this.GAME_WIDTH / 2, this.GAME_HEIGHT *0.4);
-             ctx.fillText(`You earned $${this.totalReward}!`,
-              this.GAME_WIDTH / 2, this.GAME_HEIGHT * 0.5);
+            this.GAME_WIDTH / 2, this.GAME_HEIGHT *0.4);
+            ctx.fillText(`You have earned a total bonus of £${this.accumulatedPayment} so far!`,
+            this.GAME_WIDTH / 2, this.GAME_HEIGHT * 0.5);
             ctx.fillText(`Please press ENTER to continue`,
-              this.GAME_WIDTH / 2, this.GAME_HEIGHT *0.7);
+            this.GAME_WIDTH / 2, this.GAME_HEIGHT *0.7);
         } else {
             ctx.fillStyle = "rgb(27, 46, 56)";
             ctx.fillRect(0, 0, this.GAME_WIDTH, this.GAME_HEIGHT);
@@ -1106,7 +1123,9 @@ export default class Game{
             ctx.font = `bold ${this.betweenTrialTextSize}px Arial`;
             ctx.fillStyle = "white";
             ctx.textAlign = "center";
-            ctx.fillText("You have finished the experiment", this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2);
+            ctx.fillText("You have finished the experiment", this.GAME_WIDTH / 2, this.GAME_HEIGHT * 0.4);
+            ctx.fillText(`You earned a total bonus of £${this.accumulatedPayment}`, this.GAME_WIDTH / 2, this.GAME_HEIGHT * 0.5);
+            ctx.fillText("Press ENTER to exit", this.GAME_WIDTH / 2, this.GAME_HEIGHT * 0.7);
         }
 
     }

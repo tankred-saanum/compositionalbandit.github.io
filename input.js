@@ -20,11 +20,13 @@ export default class InputHandler {
                 case 13:
 
                     if (game.currentGameState === game.GAMESTATES.BETWEENCYCLE){
-                    game.currentCycle += 1;
-                    game.timer = 0;
-                    game.generalData.betweenRoundTime.push(game.betweenRoundTimer)
-                    game.betweenRoundTimer = 0;
-                    game.startNewGame();
+                        game.currentCycle += 1;
+                        game.timer = 0;
+                        game.generalData.betweenRoundTime.push(game.betweenRoundTimer)
+                        game.betweenRoundTimer = 0;
+                        game.startNewGame();
+                    } else if (game.currentGameState === game.GAMESTATES.FINISHED) {
+                        game.currentGameState = game.GAMESTATES.EXIT;
                     }
                     break;
             }
@@ -33,7 +35,7 @@ export default class InputHandler {
         game.submitButton.addEventListener('click', event => {
             if(game.player.currentTarget.currentCustomer != undefined){
                 if (game.player.canSelect && game.player.currentTarget.currentCustomer.readyToServe && game.hasMovedSlider){
-                    
+
                     // get reward from alien
                     game.player.currentTarget.currentCustomer.giveReward(game.xSlider.value, game.ySlider.value);
                     // update display
